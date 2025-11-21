@@ -1,0 +1,2 @@
+-- every query used in the code to retrieve stuff on the site goes here, 
+-- along with a comment explaining what each one does and where
