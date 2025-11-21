@@ -1,16 +1,4 @@
-CREATE TABLE games(
-   game_id      INTEGER  NOT NULL PRIMARY KEY 
-  ,name         VARCHAR(132) NOT NULL
-  ,platform     VARCHAR(4) NOT NULL
-  ,year         NUMERIC(6,1)
-  ,genre        VARCHAR(12) NOT NULL
-  ,publisher    VARCHAR(38)
-  ,na_sales     NUMERIC(5,2)
-  ,eu_sales     NUMERIC(5,2)
-  ,jp_sales     NUMERIC(5,2)
-  ,other_sales  NUMERIC(5,2)
-  ,global_sales NUMERIC(5,2)
-);
+-- populate data
 INSERT INTO games(game_id,name,platform,year,genre,publisher,na_sales,eu_sales,jp_sales,other_sales,global_sales) VALUES (1,'Wii Sports','Wii',2006.0,'Sports','Nintendo',41.49,29.02,3.77,8.46,82.74);
 INSERT INTO games(game_id,name,platform,year,genre,publisher,na_sales,eu_sales,jp_sales,other_sales,global_sales) VALUES (2,'Super Mario Bros.','NES',1985.0,'Platform','Nintendo',29.08,3.58,6.81,0.77,40.24);
 INSERT INTO games(game_id,name,platform,year,genre,publisher,na_sales,eu_sales,jp_sales,other_sales,global_sales) VALUES (3,'Mario Kart Wii','Wii',2008.0,'Racing','Nintendo',15.85,12.88,3.79,3.31,35.82);
