@@ -1,6 +1,6 @@
 -- queries to set up the database go here
 
-CREATE TABLE games(
+CREATE TABLE if not exists games(
    game_id      INTEGER  NOT NULL PRIMARY KEY 
   ,name         VARCHAR(132) NOT NULL
   ,platform     VARCHAR(4) NOT NULL
