@@ -1,0 +1,16 @@
+# security.txt - User Password Security
+
+[Passwords]
+All user passwords are never stored in plain text. We use the bcrypt hashing algorithm
+to securely hash passwords before storing them in our database. Bcrypt automatically
+generates a unique salt for each password and performs multiple rounds of hashing,
+making it computationally expensive for attackers to reverse.
+
+[Approach]
+- Passwords are hashed using bcrypt with a work factor (cost) of 12.
+- Unique salts are generated for each password automatically by bcrypt.
+- Only the resulting hash is stored; the plain password is never persisted.
+- During login, the input password is hashed and compared to the stored hash.
+- No reversible encryption is used; even database access does not reveal passwords.
+
+
