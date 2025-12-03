@@ -59,6 +59,7 @@ public class GamesService {
    @Autowired
    public List<Game> getMostPopularGlobal() {
       // not implemented yet
+      // the current SQL statement before jonah updating the schema: SELECT * FROM games ORDER BY global_sales DESC LIMIT 10;
    }
 
 }
