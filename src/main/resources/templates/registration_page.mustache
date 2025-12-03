@@ -2,20 +2,27 @@
 <html lang="en">
 {{> fragments/html_header}}
 
-<body>
+<body class="login-page">
 
-    <div class="container center-align narrow">
+    <div class="logo-wrapper">
+        <h2 class="brand-title">Register</h2>
+    </div>
+
+    <div class="container center-align narrow login-container">
         {{> fragments/error_message}}
+        
         <form method="post" action="/register">
-            <input name="firstName" class="short-input full" type="text" placeholder="First Name">
-            <input name="lastName" class="short-input full" type="text" placeholder="Last Name">
-            <input name="username" class="short-input full" type="text" placeholder="Username">
-            <input name="password" class="short-input full" type="password" placeholder="Password">
-            <input name="passwordRepeat" class="short-input full" type="password" placeholder="Password Repeat">
-            <button type="submit" class="action-button">Register</button>
+            <input name="firstName" class="short-input full login-input" type="text" placeholder="First Name">
+            <input name="lastName" class="short-input full login-input" type="text" placeholder="Last Name">
+            <input name="username" class="short-input full login-input" type="text" placeholder="Username">
+            <input name="password" class="short-input full login-input" type="password" placeholder="Password">
+            <input name="passwordRepeat" class="short-input full login-input" type="password" placeholder="Password Repeat">
+            
+            <button type="submit" class="action-button login-btn">Register</button>
+            
+            <a class="link login-link" href="/login">Already have an account? Login</a>
         </form>
     </div>
 
 </body>
-
 </html>
