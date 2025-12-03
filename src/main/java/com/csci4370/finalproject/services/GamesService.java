@@ -30,7 +30,7 @@ public class GamesService {
       if (name == null || name.isEmpty()) {
          return games;
       }
-      final String sql = "select * from games where name like ?";
+      final String sql = "SELECT * FROM games WHERE name like ?";
       try (Connection conn = dataSource.getConnection();
             PreparedStatement pstmt = conn.prepareStatement(sql)) {
 

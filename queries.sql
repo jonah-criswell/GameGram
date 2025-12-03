@@ -16,14 +16,13 @@ SELECT * FROM games WHERE FLOOR(year / 10) = FLOOR(? / 10) ORDER BY global_sales
 
 -- Games Page (for browsing and searching games)
 -- Using the search bar, get games with the title that the user inputs
-
+SELECT * FROM games WHERE name like ?;
 
 -- Game Page (for whatever game is being looked at by the user)
 -- Get information about the specific game
 SELECT * FROM games WHERE game_id = ?;
 -- Get the game info and reviews for the game
 SELECT * FROM games g LEFT JOIN reviews r ON g.game_id = r.review_of WHERE g.game_id = ?;
-
 
 -- Reviews
 -- Get the info for a review and its comments
