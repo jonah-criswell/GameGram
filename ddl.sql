@@ -1,6 +1,4 @@
 -- queries to set up the database go here
-create database if not exists gamegram;
-
 use gamegram;
 
 CREATE TABLE if not exists games(
@@ -37,21 +35,4 @@ create table if not exists follows (
     key followedId (followedId),
     constraint follows_ibfk_1 foreign key (followingId) references user (userId),
     constraint follows_ibfk_2 foreign key (followedId) references user (userId)
-);
-
-create table if not exists review (
-    reviewId int auto_increment,
-    game_id int not null,
-    hoursPlayed int not null,
-    content varchar(1000) not null,
-    reviewRating int check (reviewRating >= 0 AND reviewRating <= 10) not null,
-    reviewDate datetime not null,
-    userId int not null,
-    heartsCount int default 0,
-    commentsCount int default 0,
-    isHearted int default 0,
-    isBookmarked int default 0,
-    primary key (reviewId),
-    foreign key (userId) references user (userId),
-    foreign key (game_id) references games (game_id)
 );
