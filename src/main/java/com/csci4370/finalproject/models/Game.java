@@ -33,5 +33,6 @@ public class Game {
         this.genre = genre;
         this.publisher = publisher;
     }
+}
 
  
