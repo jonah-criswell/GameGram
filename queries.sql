@@ -12,7 +12,24 @@ SELECT * FROM games WHERE publisher = ? ORDER BY global_sales DESC LIMIT 10;
 SELECT * FROM games WHERE FLOOR(year / 10) = FLOOR(? / 10) ORDER BY global_sales DESC LIMIT 10;
 -- Finds the 10 most popular games among the user's friends
 
+-- Friends / Follows Page
 
+-- Game Page (for whatever game is being looked at by the user)
+-- Get information about the specific game
+SELECT * FROM games WHERE game_id = ?;
+-- Get the game info and reviews for the game
+SELECT * FROM games g LEFT JOIN reviews r ON g.game_id = r.review_of WHERE g.game_id = ?;
+
+-- Reviews
+-- Get the info for a review and its comments
+SELECT * FROM reviews r LEFT JOIN review_comments c ON r.review_id = c.posted_on WHERE r.review_id = ?;
+
+-- Profile Page
+-- Get user info and all their reviews
+SELECT * FROM user u LEFT JOIN reviews r on u.user_id = r.review_by WHERE u.user_id = ?;
+
+-- Bookmark tab: shows games you want to play, and basic info about each game
+-- Retrieves games that the user has bookmarked 
 
 
 
