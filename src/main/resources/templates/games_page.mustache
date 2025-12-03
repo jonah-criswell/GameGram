@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+
+<form method="get" action="/games">
+   <input name="query" type="text" placeholder="Search Games">
+   <button type="submit">Search</button>
+</form>
+
+{{#games}}
+    <div>
+        <h3>{{name}}</h3>
+        <p><strong>Platform:</strong> {{platform}}</p>
+        <p><strong>Genre:</strong> {{genre}}</p>
+        <p><strong>Year:</strong> {{year}}</p>
+        <p><strong>Publisher:</strong> {{publisher}}</p>
+    </div>
+{{/games}}
+
+<!-- Optional: show message if no games -->
+{{^games}}
+    <p>No games found</p>
+{{/games}}
