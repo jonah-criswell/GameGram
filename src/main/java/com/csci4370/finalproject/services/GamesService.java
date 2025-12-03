@@ -27,14 +27,21 @@ public class GamesService {
 
    public List<Game> searchGameByTitle(String name) {
       List<Game> games = new ArrayList<>();
+      String sql;
+      
       if (name == null || name.isEmpty()) {
-         return games;
+         // If no search query, return all games
+         sql = "select * from games";
+      } else {
+         sql = "select * from games where name like ?";
       }
-      final String sql = "select * from games where name like ?";
+      
       try (Connection conn = dataSource.getConnection();
             PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-         pstmt.setString(1, "%" + name + "%");
+         if (name != null && !name.isEmpty()) {
+            pstmt.setString(1, "%" + name + "%");
+         }
 
          try (ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
