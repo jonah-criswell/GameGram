@@ -40,7 +40,7 @@ public class HomeController {
     }
 
     /**
-     * This function handles the /createpost URL.
+     * This function handles the /createreview URL.
      * This handles a post request that is going to be a form submission.
      * The form for this can be found in the home page. The form has a
      * input field with name = posttext. Note that the @RequestParam
