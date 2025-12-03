@@ -1,0 +1,107 @@
+/* Login page*/
+.login-page {
+    background-color: #000000; /* Pure Black */
+    color: #ffffff;
+    min-height: 100vh;
+    margin: 0;
+    
+    /* Flexbox centering mechanism */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: sans-serif; /* Fallback if you don't have a specific font yet */
+}
+
+/* Logo Wrapper */
+.logo-wrapper {
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+/* Gradient Logo Text */
+.brand-title {
+    font-size: 5rem; /* Big logo */
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -3px;
+    margin: 0;
+    
+    /* Gradient for logo */
+    background: linear-gradient(135deg, #ff00cc 0%, #333399 100%);
+    -webkit-background-clip: text; /* Clips background to the text shape */
+    -webkit-text-fill-color: transparent; /* Makes text transparent so bg shows */
+    background-clip: text;
+}
+
+/* Form Container */
+.login-container {
+    width: 100%;
+    max-width: 380px;
+    padding: 2.5rem;
+    
+    /* separation from background */
+    background-color: #0a0a0a; 
+    border: 1px solid #1f1f1f;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+}
+
+/* Login Inputs */
+.login-input {
+    /* Overwrite specific properties for the splash page */
+    background-color: #151515;
+    border: 1px solid #333;
+    color: white;
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    width: 100%;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+}
+
+.login-input:focus {
+    outline: none;
+    border-color: #ff00cc; /* Matches the pink in the logo */
+    background-color: #000;
+    box-shadow: 0 0 10px rgba(255, 0, 204, 0.2);
+}
+
+/* Login Button */
+.login-btn {
+    width: 100%;
+    padding: 16px;
+    margin-top: 10px;
+    background: linear-gradient(90deg, #ff00cc, #333399);
+    color: white;
+    font-weight: 800;
+    border: none;
+    border-radius: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: transform 0.1s ease, opacity 0.2s;
+}
+
+.login-btn:hover {
+    opacity: 0.9;
+}
+
+.login-btn:active {
+    transform: scale(0.98); /* Slight click effect */
+}
+
+/* Register Link */
+.login-link {
+    display: block;
+    margin-top: 20px;
+    text-align: center;
+    color: #666;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.login-link:hover {
+    color: #ff00cc;
+}

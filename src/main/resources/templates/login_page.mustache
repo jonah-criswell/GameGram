@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+{{> fragments/html_header}}
+
+<body class="login-page">
+
+    <div class="logo-wrapper">
+        <h1 class="brand-title">GameGram</h1>
+    </div>
+
+    <div class="container center-align narrow login-container">
+        {{> fragments/error_message}}
+        
+        <form method="post" action="/login">
+            <input name="username" class="short-input full login-input" type="text" placeholder="Username">
+            <input name="password" class="short-input full login-input" type="password" placeholder="Password">
+            
+            <button type="submit" class="action-button login-btn">Login</button>
+            
+            <a class="link login-link" href="/register">Register</a>
+        </form>
+    </div>
+
+</body>
+</html>

@@ -8,6 +8,6 @@ public class HomeController {
 
     @GetMapping("/")
     public String home() {
-        return "home"; // Will look for src/main/resources/templates/home.mustache
+        return "home_page"; // Will look for src/main/resources/templates/home.mustache
     }
 }
