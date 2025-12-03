@@ -1,7 +1,7 @@
 package com.csci4370.finalproject.models;
 
 /**
- * Represents a user of the micro blogging platform.
+ * Represents a game of the micro blogging platform.
  */
 public class Game {
 
@@ -20,10 +20,12 @@ public class Game {
     /**
      * Constructs a User with specified details.
      *
-     * @param userId           the unique identifier of the user
-     * @param firstName        the first name of the user
-     * @param lastName         the last name of the user
-     * @param profileImagePath the path of the profile image file for the user
+     * @param game_id   the unique identifier of the game
+     * @param name      the name of the game
+     * @param year      the release year of the game
+     * @param platform  the platform of the game
+     * @param genre     the genre of the game
+     * @param publisher the publisher of the game 
      */
     public Game(String game_id, String name, int year, String platform, String genre, String publisher) {
         this.game_id = game_id;
