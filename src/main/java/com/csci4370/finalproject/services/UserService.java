@@ -3,6 +3,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.sql.DataSource;
 
@@ -115,5 +117,62 @@ public class UserService {
             int rowsAffected = registerStmt.executeUpdate();
             return rowsAffected > 0;
         }
+    }
+
+
+    public List<User> getUserFollowedFriends(String userID) {
+        final String sql = "SELECT * FROM user u LEFT JOIN follows f ON u.userId = f.followedId WHERE f.followingId = ?;";
+        List<User> users = new ArrayList<>();
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, userID);
+            try (ResultSet rs = pstmt.executeQuery()) {
+
+                while (rs.next()) {
+
+                    String userId = rs.getString("userId");
+                    String username = rs.getString("username");
+                    String firstName = rs.getString("firstName");
+                    String lastName = rs.getString("lastName");
+                    //String profileImagePath = rs.getString("profileImagePath");
+
+                    // String postId = rs.getString("postId");
+                    // String content = rs.getString("content");
+                    // String postDate = rs.getString("formattedDate");
+                    // //User user = new User(userId, firstName, lastName, profileImagePath);
+                    User user = new User(userId, firstName, lastName);
+                //     // For more complicated post:
+                //     int heartsCount = rs.getInt("heartsCount");
+                //     int commentsCount = rs.getInt("commentsCount");
+                //    // boolean isHearted = rs.getBoolean("isHearted");
+                //     boolean isHeartedBoolean;
+                //     final String checkHeartSql = "SELECT * FROM post_hearts WHERE userId = ? AND postId = ?;";
+                //     try (PreparedStatement checkHeartStmt = conn.prepareStatement(checkHeartSql)) {
+                //         checkHeartStmt.setString(1, userID);
+                //         checkHeartStmt.setString(2, postId);
+                //         try (ResultSet heartRs = checkHeartStmt.executeQuery()) {
+                //             isHeartedBoolean = heartRs.next();
+                //         }
+                //     }
+                //     //boolean isBookmarked = rs.getBoolean("isBookmarked");
+                //     boolean isBookmarkedBoolean;
+                //     final String checkBookmarkSql = "SELECT * FROM post_bookmarks WHERE userId = ? AND postId = ?;";
+                //     try (PreparedStatement checkBookmarkStmt = conn.prepareStatement(checkBookmarkSql)) {
+                //         checkBookmarkStmt.setString(1, userID);
+                //         checkBookmarkStmt.setString(2, postId);
+                //         try (ResultSet bookmarkRs = checkBookmarkStmt.executeQuery()) {
+                //             isBookmarkedBoolean = bookmarkRs.next();
+                //         }
+                //     }
+                    //user.add(new (postId, content, postDate, user, heartsCount, commentsCount, isHeartedBoolean, isBookmarkedBoolean));
+                    users.add(user);
+                   // posts.add(new BasicPost(postId, content, postDate, user));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return users;
     }
 }

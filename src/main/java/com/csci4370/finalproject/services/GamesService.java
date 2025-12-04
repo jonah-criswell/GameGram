@@ -63,21 +63,21 @@ public class GamesService {
    }
 
    // Get a list of the most popular games worldwide based on sales
-   public List<Game> getMostPopularGlobal() {
-      List<Game> games = new ArrayList<>();
-      final String sql = """
-    SELECT g.game_id, g.name, g.year, g.genre, g.platform, g.publisher, p.global_sales
-    FROM games g
-    JOIN platforms p ON g.platform = p.platform_name
-    ORDER BY p.global_sales DESC
-    LIMIT 10
-""";
+ public List<Game> getMostPopularGlobal() {
+    List<Game> games = new ArrayList<>();
+    final String sql = """
+        SELECT g.game_id, g.name, g.year, g.genre, g.platform, g.publisher
+        FROM games g
+        JOIN platforms p ON g.platform = p.platform_name
+        ORDER BY p.global_sales DESC
+        LIMIT 10
+    """;
 
-      try (Connection conn = dataSource.getConnection();
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            ResultSet rs = pstmt.executeQuery()) {
-            
-         while (rs.next()) {
+    try (Connection conn = dataSource.getConnection();
+         PreparedStatement pstmt = conn.prepareStatement(sql);
+         ResultSet rs = pstmt.executeQuery()) {
+
+        while (rs.next()) {
             String gameId = rs.getString("game_id");
             String gameTitle = rs.getString("name");
             int year = rs.getInt("year");
@@ -85,10 +85,13 @@ public class GamesService {
             String platform = rs.getString("platform");
             String publisher = rs.getString("publisher");
             games.add(new Game(gameId, gameTitle, year, platform, genre, publisher));
-         }
-      } catch (SQLException e) {
-         e.printStackTrace();
-      }
-      return games;
-   }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return games; // <--- MUST be here, outside try-catch
+}
+
+
 }
