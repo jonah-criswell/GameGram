@@ -4,7 +4,7 @@ package com.csci4370.finalproject.models;
  */
 public class Review extends BasicPost {
 
-    private final int gameId;
+    private final int game_id;
 
     private final int hoursPlayed;
 
@@ -25,16 +25,16 @@ public class Review extends BasicPost {
      * @param content    the text content of the post
      * @param postDate   the creation date of the post
      * @param user       the user who created the post
-     * @param gameId      the unique identifier of the game being reviewed
+     * @param game_id      the unique identifier of the game being reviewed
      * @param hoursPlayed the number of hours played by the reviewer
      * @param reviewText  the text content of the review
      * @param reviewRating the rating given in the review
      * @param reviewDate  the date the review was posted
      */
-    public Review(String postId, String content, String postDate, User user, int gameId, int hoursPlayed,
+    public Review(String postId, String content, String postDate, User user, int game_id, int hoursPlayed,
             int reviewRating, int heartsCount, int commentsCount, boolean isHearted, boolean isBookmarked) {
         super(postId, content, postDate, user);
-        this.gameId = gameId;
+        this.game_id = game_id;
         this.hoursPlayed = hoursPlayed;
         this.reviewRating = reviewRating;
         this.heartsCount = heartsCount;
@@ -57,8 +57,8 @@ public class Review extends BasicPost {
      *  
      * @return the game ID
      */
-    public int getGameId() {
-        return gameId;
+    public int getGame_id() {
+        return game_id;
     }
     /**
      * Returns the number of hours played.

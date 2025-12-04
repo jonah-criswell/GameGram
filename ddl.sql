@@ -4,15 +4,7 @@ use gamegram;
 CREATE TABLE if not exists games(
    game_id      INTEGER  NOT NULL PRIMARY KEY 
   ,name         VARCHAR(132) NOT NULL
-  ,platform     VARCHAR(4) NOT NULL
-  ,year         NUMERIC(6,1)
   ,genre        VARCHAR(12) NOT NULL
-  ,publisher    VARCHAR(38)
-  ,na_sales     NUMERIC(5,2)
-  ,eu_sales     NUMERIC(5,2)
-  ,jp_sales     NUMERIC(5,2)
-  ,other_sales  NUMERIC(5,2)
-  ,global_sales NUMERIC(5,2)
 );
 
 create table if not exists user (
@@ -35,4 +27,35 @@ create table if not exists follows (
     key followedId (followedId),
     constraint follows_ibfk_1 foreign key (followingId) references user (userId),
     constraint follows_ibfk_2 foreign key (followedId) references user (userId)
+);
+
+create table if not exists platforms (
+    game_id int not null,
+    platform varchar(4) not null,
+    year numeric(6,1),
+    publisher varchar(38)
+    ,na_sales     NUMERIC(5,2)
+    ,eu_sales     NUMERIC(5,2)
+    ,jp_sales     NUMERIC(5,2)
+    ,other_sales  NUMERIC(5,2)
+    ,global_sales NUMERIC(5,2)
+    ,primary key (game_id, platform),
+    constraint platforms_ibfk_1 foreign key (game_id) references games (game_id)
+);
+
+create table if not exists review (
+    reviewId int auto_increment,
+    userId int not null,
+    game_id int not null,
+    hoursPlayed int not null,
+    reviewRating int not null,
+    content varchar(1000) not null,
+    postDate datetime default current_timestamp,
+    heartsCount int default 0,
+    commentsCount int default 0,
+    isHearted boolean default false,
+    isBookmarked boolean default false,
+    primary key (reviewId),
+    constraint review_ibfk_1 foreign key (userId) references user (userId),
+    constraint review_ibfk_2 foreign key (game_id) references games (game_id)
 );

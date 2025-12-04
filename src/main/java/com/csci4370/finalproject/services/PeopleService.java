@@ -51,7 +51,7 @@ public class PeopleService {
                     String lastname = rs.getString(5);
 
                     String isFollowSQL = "SELECT 1 FROM follows WHERE followingId = ? AND followedId = ? LIMIT 1";
-                    String getLastPostDateSQL = "SELECT DATE_FORMAT(postDate, '%b %d, %Y, %h:%i %p') AS formattedDate FROM full_post WHERE userId = ? ORDER BY postDate DESC LIMIT 1";
+                    String getLastPostDateSQL = "SELECT DATE_FORMAT(postDate, '%b %d, %Y, %h:%i %p') AS formattedDate FROM review WHERE userId = ? ORDER BY postDate DESC LIMIT 1";
                     boolean isFollow = false;
                     try (PreparedStatement pstmt2 = conn.prepareStatement(isFollowSQL)) {
                         pstmt2.setString(1, userIdToExclude);

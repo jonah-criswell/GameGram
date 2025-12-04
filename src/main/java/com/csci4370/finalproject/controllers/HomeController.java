@@ -2,6 +2,7 @@ package com.csci4370.finalproject.controllers;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,6 +14,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.csci4370.finalproject.services.UserService;
 import com.csci4370.finalproject.services.ReviewService;
+import com.csci4370.finalproject.services.GamesService;
+import com.csci4370.finalproject.models.User;
+import com.csci4370.finalproject.models.Game;
 
 @Controller
 @RequestMapping
@@ -20,22 +24,39 @@ public class HomeController {
 
     private final UserService userService;
     private final ReviewService reviewService;
+    private final GamesService gamesService;
+
 
     @Autowired
-    public HomeController(UserService userService, ReviewService reviewService) {
+    public HomeController(UserService userService, ReviewService reviewService, GamesService gamesService) {
         this.userService = userService;
         this.reviewService = reviewService;
+        this.gamesService = gamesService;
     }
 
     @GetMapping
     public ModelAndView webpage(@RequestParam(name = "error", required = false) String error) {
-        // See notes on ModelAndView in BookmarksController.java.
         ModelAndView mv = new ModelAndView("home_page");
 
         if (!userService.isAuthenticated()) {
             mv.setViewName("redirect:/login");
             return mv;
         }
+
+        User currentUser = userService.getLoggedInUser();
+
+        // try {
+        //     List<Game> globalPopularGames = gamesService.getMostPopularGlobal();
+        //     mv.addObject("posts", globalPopularGames);
+
+        //     if (globalPopularGames.isEmpty()) {
+        //         mv.addObject("isNoContent", true);
+        //     }
+        // } catch (Exception e) {
+        //     mv.addObject("errorMessage", "Unable to load user posts.");
+        //     e.printStackTrace();
+        // }
+
         return mv;
     }
 
