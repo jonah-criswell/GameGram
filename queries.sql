@@ -35,21 +35,37 @@ SELECT * FROM game_summary WHERE FIND_IN_SET(?, publishers) ORDER BY total_globa
 -- Finds the 10 most popular games that were published in a particular decade
 SELECT * FROM game_summary WHERE EXISTS (SELECT 1 FROM platforms p WHERE p.game_id = game_summary.game_id 
 AND FLOOR(p.year / 10) = FLOOR(? / 10)) ORDER BY total_global_sales DESC LIMIT 10;
+----------------------------------------------------------------------------------------------------------------------------------------
 
 -- Games Page (for browsing and searching games)
 -- Using the search bar, get games with the title that the user inputs
-SELECT * FROM games WHERE name like ?; -- probably need to update this one ------------------------------------------------------------------------
+SELECT g.game_id, g.name, g.genre, p.platform, p.year, p.publisher, p.na_sales, p.eu_sales, p.jp_sales, p.other_sales, p.global_sales
+        FROM games g
+        JOIN platforms p ON p.game_id = g.game_id
+        WHERE g.name LIKE ?;
+-- get the average rating for a game
+SELECT AVG(rating) as avg_rating FROM reviews WHERE review_of = ?;
 
 -- Profile Page
--- Get user info and all their reviews
+-- Get user info and all their reviews 
 SELECT * FROM user u LEFT JOIN reviews r on u.userId = r.review_by WHERE u.userId = ?;
+-- Get the user's average review rating
+SELECT AVG(rating) as avg_rating FROM reviews WHERE review_by = ?;
 
 -- Friends / Follows Page
 -- Get all users that the current user follows
 SELECT * FROM user u LEFT JOIN follows f ON u.userId = f.followedId WHERE f.followingId = ?; 
 
+-- Hearts and Comments for Reviews
+-- When a user hearts a post this stores that in the database. Used on any page displaying posts 
+insert into review_hearts (review_id, userId) values (?, ?);
+--When a user unhearts a post this removes the heart from the database. Used on any page displaying posts 
+delete from review_hearts where review_id = ? and userId = ?;
+-- When a user posts a comment this stores the comment's information in the database.  
+insert into review_comments (comment_id, comment_text, comment_date, posted_on, posted_by) values (?, ?, now(), ?, ?);
+
+
+
+
 -- Bookmark tab: shows games you want to play, and basic info about each game
 -- Retrieves games that the user has bookmarked 
-
-
-
