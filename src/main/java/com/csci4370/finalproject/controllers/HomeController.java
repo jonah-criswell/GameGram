@@ -115,7 +115,7 @@ public class HomeController {
     @PostMapping("/follow")
     public String followOrUnfollowUser(
             @RequestParam("followedId") String followedId,
-            @RequestParam("isFollowed") boolean isFollow) {
+            @RequestParam("isFollowed") boolean isFollowed) {
 
         if (!userService.isAuthenticated()) {
             return "redirect:/login";
@@ -125,7 +125,7 @@ public class HomeController {
         String currentUserId = currentUser.getUserId();
 
         try {
-            if (isFollow) {
+            if (isFollowed) {
                 // Currently following, so unfollow
                 followService.unfollowUser(currentUserId, followedId);
             } else {
