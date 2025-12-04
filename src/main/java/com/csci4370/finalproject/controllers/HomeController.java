@@ -25,17 +25,9 @@ import com.csci4370.finalproject.models.Game;
 public class HomeController {
 
     private final UserService userService;
-    private final ReviewService reviewService;
-    private final GamesService gamesService;
-    private final PeopleService peopleService;
-
-
     @Autowired
-    public HomeController(UserService userService, ReviewService reviewService, GamesService gamesService, PeopleService peopleService) {
+    public HomeController(UserService userService) {
         this.userService = userService;
-        this.reviewService = reviewService;
-        this.gamesService = gamesService;
-        this.peopleService = peopleService;
     }
 
     @GetMapping
@@ -46,34 +38,6 @@ public class HomeController {
             mv.setViewName("redirect:/login");
             return mv;
         }
-
-        User currentUser = userService.getLoggedInUser();
-
-        try{
-            List <FollowableUser> users = peopleService.getFollowableUsers(currentUser.getUserId());
-            mv.addObject("users", users);
-
-            if(users.isEmpty()){
-                mv.addObject("isNoContent", true);
-            }
-
-        } catch (Exception e){
-            mv.addObject("errorMessage", "Unable to load users.");
-            e.printStackTrace();
-        }
-
-        // try {
-        //     List<Game> globalPopularGames = gamesService.getMostPopularGlobal();
-        //     mv.addObject("posts", globalPopularGames);
-
-        //     if (globalPopularGames.isEmpty()) {
-        //         mv.addObject("isNoContent", true);
-        //     }
-        // } catch (Exception e) {
-        //     mv.addObject("errorMessage", "Unable to load user posts.");
-        //     e.printStackTrace();
-        // }
-
         return mv;
     }
 
@@ -85,23 +49,23 @@ public class HomeController {
      * annotation has the same name. This makes it possible to access the value
      * from the input from the form after it is submitted.
      */
-    @PostMapping("/createreview")
-    public String createReview(@RequestParam(name = "posttext") int hoursPlayed ,String postText, int reviewRating) {
-        System.out.println("User is creating a: " + postText);
+    // @PostMapping("/createreview")
+    // public String createReview(@RequestParam(name = "posttext") int hoursPlayed ,String postText, int reviewRating) {
+    //     System.out.println("User is creating a: " + postText);
 
-        // Redirect the user if the post creation is a success.
-        try {
+    //     // Redirect the user if the post creation is a success.
+    //     try {
 
-            reviewService.makeReview(hoursPlayed, postText, reviewRating, userService.getLoggedInUser());
-            return "redirect:/";
-        } catch (Exception e) {
-            e.printStackTrace();
-            String message = URLEncoder.encode("Failed to create the post. Please try again.",
-                StandardCharsets.UTF_8);
-        return "redirect:/?error=" + message;
-        // return "redirect:/";
+    //         reviewService.makeReview(hoursPlayed, postText, reviewRating, userService.getLoggedInUser());
+    //         return "redirect:/";
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //         String message = URLEncoder.encode("Failed to create the post. Please try again.",
+    //             StandardCharsets.UTF_8);
+    //     return "redirect:/?error=" + message;
+    //     // return "redirect:/";
 
-        }
-    }   
+    //     }
+    // }   
 
 }
