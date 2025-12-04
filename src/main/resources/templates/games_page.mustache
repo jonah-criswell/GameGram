@@ -10,10 +10,15 @@
 {{#games}}
     <div>
         <h3>{{name}}</h3>
-        <p><strong>Platform:</strong> {{platform}}</p>
         <p><strong>Genre:</strong> {{genre}}</p>
-        <p><strong>Year:</strong> {{year}}</p>
-        <p><strong>Publisher:</strong> {{publisher}}</p>
+        <p><strong>Platforms:</strong></p>
+        <ul>
+        {{#platforms}}
+          <li>
+            {{platform_name}} - {{publisher}} ({{year}})
+          </li>
+        {{/platforms}}
+        </ul>
     </div>
 {{/games}}
 
