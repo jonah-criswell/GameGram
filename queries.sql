@@ -15,6 +15,10 @@ FROM games g
 JOIN platforms p ON g.game_id = p.game_id
 GROUP BY g.game_id, g.name, g.genre;
 
+-- User registration
+-- insert a new user and their information into the database
+insert into user (username, password, firstName, lastName) values (?, ?, ?, ?)
+
 -- Homepage 
 -- Finds the 10 most popular games worldwide based on sales. 
 SELECT * FROM game_summary ORDER BY total_global_sales DESC LIMIT 10;
@@ -56,13 +60,21 @@ SELECT AVG(rating) as avg_rating FROM reviews WHERE review_by = ?;
 -- Get all users that the current user follows
 SELECT * FROM user u LEFT JOIN follows f ON u.userId = f.followedId WHERE f.followingId = ?; 
 
+-- Reviews
+-- Insert a review into the database when a user makes a review
+--INSERT INTO reviews ()
+
 -- Hearts and Comments for Reviews
 -- When a user hearts a post this stores that in the database. Used on any page displaying posts 
-insert into review_hearts (review_id, userId) values (?, ?);
+INSERT INTO review_hearts (review_id, userId) VALUES (?, ?);
 --When a user unhearts a post this removes the heart from the database. Used on any page displaying posts 
-delete from review_hearts where review_id = ? and userId = ?;
+DELETE FROM review_hearts WHERE review_id = ? AND userId = ?;
+-- Access a review's number of hearts
+SELECT COUNT(userId) as heart_count FROM review_hearts WHERE review_id = ?;
 -- When a user posts a comment this stores the comment's information in the database.  
-insert into review_comments (comment_id, comment_text, comment_date, posted_on, posted_by) values (?, ?, now(), ?, ?);
+INSERT INTO review_comments (comment_id, comment_text, comment_date, posted_on, posted_by) VALUES (?, ?, now(), ?, ?);
+-- Access a review's number of comments
+SELECT COUNT(comment_id) as comment_count FROM review_comments WHERE posted_on = ?;
 
 
 
