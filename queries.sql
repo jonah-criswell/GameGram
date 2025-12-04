@@ -27,7 +27,7 @@ followed_reviews AS (SELECT r.review_id, r.review_of FROM reviews r JOIN followe
 SELECT gs.*, COUNT(fr.review_id) AS r_count FROM game_summary gs LEFT JOIN followed_reviews fr ON fr.review_of = gs.game_id
 GROUP BY gs.game_id ORDER BY r_count DESC LIMIT 10;
 
--- - don't know if we're actually using these - 
+-- - don't know if we're actually using these - ---------------------------------------------------------------------------------------
 -- Finds the 10 most popular games that have a particular platform
 SELECT * FROM game_summary WHERE FIND_IN_SET(?, platforms) ORDER BY total_global_sales DESC LIMIT 10;
 -- Finds the 10 most popular games that have a particular publisher
@@ -36,23 +36,9 @@ SELECT * FROM game_summary WHERE FIND_IN_SET(?, publishers) ORDER BY total_globa
 SELECT * FROM game_summary WHERE EXISTS (SELECT 1 FROM platforms p WHERE p.game_id = game_summary.game_id 
 AND FLOOR(p.year / 10) = FLOOR(? / 10)) ORDER BY total_global_sales DESC LIMIT 10;
 
-
-
-
-
 -- Games Page (for browsing and searching games)
 -- Using the search bar, get games with the title that the user inputs
-SELECT * FROM games WHERE name like ?;
-
--- Game Page (for whatever game is being looked at by the user)
--- Get information about the specific game
-SELECT * FROM games WHERE game_id = ?;
--- Get the game info and reviews for the game
-SELECT * FROM games g LEFT JOIN reviews r ON g.game_id = r.review_of WHERE g.game_id = ?;
-
--- Reviews
--- Get the info for a review and its comments
-SELECT * FROM reviews r LEFT JOIN review_comments c ON r.review_id = c.posted_on WHERE r.review_id = ?;
+SELECT * FROM games WHERE name like ?; -- probably need to update this one ------------------------------------------------------------------------
 
 -- Profile Page
 -- Get user info and all their reviews
