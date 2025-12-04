@@ -8,6 +8,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.csci4370.finalproject.services.UserService;
+import com.csci4370.finalproject.services.GamesService;
+import com.csci4370.finalproject.models.User;
+import com.csci4370.finalproject.models.Game;
+import java.util.List;
 
 @Controller
 @RequestMapping
