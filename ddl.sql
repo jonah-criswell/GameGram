@@ -40,4 +40,4 @@ create table if not exists platforms (
     ,global_sales NUMERIC(5,2)
     ,primary key (game_id, platform),
     constraint platforms_ibfk_1 foreign key (game_id) references games (game_id)
-)
+);
