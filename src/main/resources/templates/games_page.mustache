@@ -1,23 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
-<body>
-
-<form method="get" action="/games">
-   <input name="query" type="text" placeholder="Search Games">
-   <button type="submit">Search</button>
-</form>
-
-{{#games}}
-    <div>
-        <h3>{{name}}</h3>
-        <p><strong>Platform:</strong> {{platform}}</p>
-        <p><strong>Genre:</strong> {{genre}}</p>
-        <p><strong>Year:</strong> {{year}}</p>
-        <p><strong>Publisher:</strong> {{publisher}}</p>
+{{> fragments/html_header }}
+<body class="game-page">
+  <div class="logo-wrapper">
+    <img src="/css/gg purple logo.png" alt="GameGram Logo">
+        <h1 class="brand-title">GameGram</h1>
+        <img src="/css/gg purple logo.png" alt="GameGram Logo">
     </div>
-{{/games}}
+    {{> fragments/navbar }}
+    
+    <div class="container">
 
-<!-- Optional: show message if no games -->
-{{^games}}
-    <p>No games found</p>
-{{/games}}
+        <h1>Game Search</h1>
+
+        <form method="get" action="/games" class="search-form">
+            <input name="query" type="text" placeholder="Search Games" class="search-input">
+            <button type="submit" class="search-button">Search</button>
+        </form>
+
+        <div class="games-container">
+            {{#games}}
+                <div class="game-card">
+                    <h3>{{name}}</h3>
+                    <p><strong>Platform:</strong> {{platform}}</p>
+                    <p><strong>Genre:</strong> {{genre}}</p>
+                    <p><strong>Year:</strong> {{year}}</p>
+                    <p><strong>Publisher:</strong> {{publisher}}</p>
+                  </div>
+            {{/games}}
+
+            {{^games}}
+                <p class="no-games">No games found</p>
+            {{/games}}
+        </div>
+    </div>
+</body>
+</html>
+

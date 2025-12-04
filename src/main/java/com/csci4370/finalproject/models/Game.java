@@ -35,6 +35,30 @@ public class Game {
         this.genre = genre;
         this.publisher = publisher;
     }
+
+    public String getGame_id() {
+        return game_id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public String getPlatform() {
+        return platform;
+    }
+
+    public String getGenre() {
+        return genre;
+    }
+
+    public String getPublisher() {
+        return publisher;
+    }
 }
 
- 
+

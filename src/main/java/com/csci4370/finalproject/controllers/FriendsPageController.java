@@ -35,7 +35,7 @@ public class FriendsPageController {
         User currentUser = userService.getLoggedInUser();
 
             try {
-                mv.addObject("friends", peopleService.getFollowableUsers(currentUser.getUserId()));
+                mv.addObject("friends", userService.getUserFollowedFriends(currentUser.getUserId()));
                 //mv.addObject("friendRequests", peopleService.getFriendRequests(currentUser.getUserId()));
             } catch (Exception e) {
                 mv.addObject("errorMessage", "Unable to load friends data.");

@@ -15,7 +15,9 @@ import org.springframework.web.servlet.ModelAndView;
 import com.csci4370.finalproject.services.UserService;
 import com.csci4370.finalproject.services.ReviewService;
 import com.csci4370.finalproject.services.GamesService;
+import com.csci4370.finalproject.services.PeopleService;
 import com.csci4370.finalproject.models.User;
+import com.csci4370.finalproject.models.FollowableUser;
 import com.csci4370.finalproject.models.Game;
 
 @Controller
@@ -25,13 +27,15 @@ public class HomeController {
     private final UserService userService;
     private final ReviewService reviewService;
     private final GamesService gamesService;
+    private final PeopleService peopleService;
 
 
     @Autowired
-    public HomeController(UserService userService, ReviewService reviewService, GamesService gamesService) {
+    public HomeController(UserService userService, ReviewService reviewService, GamesService gamesService, PeopleService peopleService) {
         this.userService = userService;
         this.reviewService = reviewService;
         this.gamesService = gamesService;
+        this.peopleService = peopleService;
     }
 
     @GetMapping
@@ -44,6 +48,19 @@ public class HomeController {
         }
 
         User currentUser = userService.getLoggedInUser();
+
+        try{
+            List <FollowableUser> users = peopleService.getFollowableUsers(currentUser.getUserId());
+            mv.addObject("users", users);
+
+            if(users.isEmpty()){
+                mv.addObject("isNoContent", true);
+            }
+
+        } catch (Exception e){
+            mv.addObject("errorMessage", "Unable to load users.");
+            e.printStackTrace();
+        }
 
         // try {
         //     List<Game> globalPopularGames = gamesService.getMostPopularGlobal();
