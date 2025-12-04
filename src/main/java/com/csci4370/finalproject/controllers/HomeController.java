@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.csci4370.finalproject.services.UserService;
@@ -19,6 +20,7 @@ import com.csci4370.finalproject.services.PeopleService;
 import com.csci4370.finalproject.models.User;
 import com.csci4370.finalproject.models.FollowableUser;
 import com.csci4370.finalproject.models.Game;
+import com.csci4370.finalproject.services.FollowService;
 
 @Controller
 @RequestMapping
@@ -28,14 +30,16 @@ public class HomeController {
     private final ReviewService reviewService;
     private final GamesService gamesService;
     private final PeopleService peopleService;
+    private final FollowService followService;
 
 
     @Autowired
-    public HomeController(UserService userService, ReviewService reviewService, GamesService gamesService, PeopleService peopleService) {
+    public HomeController(UserService userService, ReviewService reviewService, GamesService gamesService, PeopleService peopleService, FollowService followService) {
         this.userService = userService;
         this.reviewService = reviewService;
         this.gamesService = gamesService;
         this.peopleService = peopleService;
+        this.followService = followService;
     }
 
     @GetMapping
@@ -61,6 +65,10 @@ public class HomeController {
             mv.addObject("errorMessage", "Unable to load users.");
             e.printStackTrace();
         }
+
+
+
+        // Redirect the user with an error message if there was an error.
 
         // try {
         //     List<Game> globalPopularGames = gamesService.getMostPopularGlobal();
@@ -103,5 +111,37 @@ public class HomeController {
 
         }
     }   
+
+    @PostMapping("/follow")
+    public String followOrUnfollowUser(
+            @RequestParam("followedId") String followedId,
+            @RequestParam("isFollowed") boolean isFollow) {
+
+        if (!userService.isAuthenticated()) {
+            return "redirect:/login";
+        }
+
+        User currentUser = userService.getLoggedInUser();
+        String currentUserId = currentUser.getUserId();
+
+        try {
+            if (isFollow) {
+                // Currently following, so unfollow
+                followService.unfollowUser(currentUserId, followedId);
+            } else {
+                // Currently not following, so follow
+                followService.followUser(currentUserId, followedId);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            String message = URLEncoder.encode("Failed to (un)follow the user. Please try again.",
+                    StandardCharsets.UTF_8);
+            return "redirect:/?error=" + message;
+        }
+
+        return "redirect:/"; // Redirect back to your user list page
+    }
+
+
 
 }

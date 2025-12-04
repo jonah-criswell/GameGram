@@ -3,19 +3,19 @@
 <ul class="friends-list">
   {{#friends}}
     <li class="friend-item">
-      <h2>{{username}}</h2>
+      <h2>{{firstName}} {{lastName}}</h2>
 
-      {{#lastMovie}}
+      {{#lastGame}}
         <div class="movie-info">
           <p><strong>Most Recent Movie:</strong> {{title}}</p>
           <p><strong>Rating:</strong> {{rating}} / 10</p>
           <p><strong>Review:</strong> {{review}}</p>
         </div>
-      {{/lastMovie}}
+      {{/lastGame}}
 
-      {{^lastMovie}}
+      {{^lastGame}}
         <p><em>No movies watched yet.</em></p>
-      {{/lastMovie}}
+      {{/lastGame}}
 
     </li>
   {{/friends}}

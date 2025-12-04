@@ -1,21 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 
-
 {{>fragments/html_header}}
-
 
 <body class="home-page">
 
-
     <div class="logo-wrapper">
-    <img src="/css/gg purple logo.png" alt="GameGram Logo">
+        <img src="/css/gg purple logo.png" alt="GameGram Logo">
         <h1 class="brand-title">GameGram</h1>
         <img src="/css/gg purple logo.png" alt="GameGram Logo">
     </div>
 
-{{>fragments/navbar}}
-<!-- Top Games Section (sort by global sales)-->
+    {{>fragments/navbar}}
+
+    <div class="friends-container" style="display: flex; flex-wrap: wrap; gap: 20px;">
+  {{#users}}
+  <div class="friend-card" style="border: 1px solid #ccc; padding: 10px; width: 200px; flex: 0 0 auto; text-align: center;">
+      <!-- User info -->
+      <img src="{{profileImagePath}}" alt="User avatar" style="width: 80px; height: 80px; border-radius: 50%;">
+      <h3>{{firstName}} {{lastName}}</h3>
+      <div class="last-active">Last active: {{lastActiveDate}}</div>
+
+      <!-- Recent Game Info -->
+      {{#recentGame}}
+      <p><strong>Most Recent Game:</strong> {{title}}</p>
+      <p><strong>Rating:</strong> {{rating}}</p>
+      <p><strong>Review:</strong> {{review}}</p>
+      {{/recentGame}}
+      {{^recentGame}}
+      <p>No recent game played.</p>
+      {{/recentGame}}
+
+      <!-- Follow / Unfollow Form -->
+      <form action="/follow" method="post" style="margin-top: 10px;">
+    <input type="hidden" name="followedId" value="{{userId}}">
+    <input type="hidden" name="isFollow" value="{{isFollowed}}">
+    <button type="submit" style="
+        padding: 8px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        color: white;
+        font-weight: bold;
+        background-color: {{#isFollowed}}#ff4d4d{{/isFollowed}}{{^isFollowed}}#4CAF50{{/isFollowed}};
+    ">
+        {{#isFollowed}}Unfollow{{/isFollowed}}
+        {{^isFollowed}}Follow{{/isFollowed}}
+    </button>
+</form>
+
+  </div>
+  {{/users}}
+</div>
+
+
 
 
 
