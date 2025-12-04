@@ -28088,8 +28088,4 @@ INSERT INTO platforms(platform,year,publisher,na_sales,eu_sales,jp_sales,other_s
 INSERT INTO platforms(platform,year,publisher,na_sales,eu_sales,jp_sales,other_sales,global_sales,game_id) VALUES ('PSP',2007.0,'Falcom Corporation',0.0,0.0,0.01,0.0,0.01,16593);
 INSERT INTO platforms(platform,year,publisher,na_sales,eu_sales,jp_sales,other_sales,global_sales,game_id) VALUES ('DS',2008.0,'Destineer',0.01,0.0,0.0,0.0,0.01,16595);
 INSERT INTO platforms(platform,year,publisher,na_sales,eu_sales,jp_sales,other_sales,global_sales,game_id) VALUES ('GBA',2002.0,'Kemco',0.01,0.0,0.0,0.0,0.01,16596);
-<<<<<<< HEAD
 INSERT INTO platforms(platform,year,publisher,na_sales,eu_sales,jp_sales,other_sales,global_sales,game_id) VALUES ('DS',2010.0,'7G//AMES',0.0,0.01,0.0,0.0,0.01,16599);
-=======
-INSERT INTO platforms(platform,year,publisher,na_sales,eu_sales,jp_sales,other_sales,global_sales,game_id) VALUES ('DS',2010.0,'7G//AMES',0.0,0.01,0.0,0.0,0.01,16599);
->>>>>>> main

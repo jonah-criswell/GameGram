@@ -43,4 +43,8 @@ public class Platform {
    public double getOtherSales() {
       return other_sales;
    }
+
+   public double getGlobalSales() {
+      return global_sales;
+   }
 }
