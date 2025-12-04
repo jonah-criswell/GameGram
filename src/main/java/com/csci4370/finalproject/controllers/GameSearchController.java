@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.csci4370.finalproject.services.GamesService;
+import com.csci4370.finalproject.dto.GameWithPlatforms;
 import com.csci4370.finalproject.models.Game;
 
 @Controller
@@ -27,7 +28,7 @@ public class GameSearchController {
       public ModelAndView webpage(@RequestParam(name = "query", required = false)  String query) {
          ModelAndView mv = new ModelAndView("games_page");
          String searchQuery = query;
-         List<Game> games = gamesService.searchGameByTitle(searchQuery);
+         List<GameWithPlatforms> games = gamesService.searchGameByTitle(searchQuery);
          mv.addObject("games", games);
          return mv;
       }
