@@ -14,9 +14,11 @@ import com.csci4370.finalproject.services.UserService;
 public class HomeController {
 
     private final UserService userService;
+    private final GamesService gamesService;
     @Autowired
-    public HomeController(UserService userService) {
+    public HomeController(UserService userService, GamesService gamesService) {
         this.userService = userService;
+        this.gamesService = gamesService;
     }
 
     @GetMapping
@@ -28,6 +30,21 @@ public class HomeController {
             mv.setViewName("redirect:/login");
             return mv;
         }
+
+        User currentUser = userService.getLoggedInUser();
+
+        try {
+            List<Game> globalPopularGames = gamesService.getMostPopularGlobal();
+            mv.addObject("posts", globalPopularGames);
+
+            if (globalPopularGames.isEmpty()) {
+                mv.addObject("isNoContent", true);
+            }
+        } catch (Exception e) {
+            mv.addObject("errorMessage", "Unable to load user posts.");
+            e.printStackTrace();
+        }
+
         return mv;
     }
 
