@@ -1,30 +1,52 @@
 -- every query used in the code to retrieve stuff on the site goes here, 
 -- along with a comment explaining what each one does and where
 
+-- game summary creation to run after inserting all the data
+CREATE VIEW game_sales_summary AS
+SELECT
+    g.game_id,
+    g.name,
+    g.genre,
+    GROUP_CONCAT(DISTINCT p.platform ORDER BY p.platform) AS platforms,
+    GROUP_CONCAT(DISTINCT p.publisher ORDER BY p.publisher) AS publishers,
+    GROUP_CONCAT(DISTINCT p.year ORDER BY p.year) AS years,
+    SUM(p.global_sales) AS total_global_sales
+FROM games g
+JOIN platforms p ON g.game_id = p.game_id
+GROUP BY g.game_id, g.name, g.genre;
+
 -- Homepage 
 -- Finds the 10 most popular games worldwide based on sales. 
-SELECT g.*, SUM(p.global_sales) AS total_global_sales FROM games g 
-JOIN platforms p ON g.game_id = p.game_id GROUP BY g.game_id ORDER BY total_global_sales DESC LIMIT 10;
+SELECT * FROM game_sales_summary ORDER BY total_global_sales DESC LIMIT 10;
+-- Finds the users not followed by the user
+WITH followed_users as (SELECT f.followedId as friend_id FROM follows f WHERE f.followingId = ?)
+SELECT * FROM user u WHERE u.user_id NOT IN (SELECT friend_id FROM followed_users) AND u.user_id <> ?;
+
+-- - don't know if we're actually using these - 
 -- Finds the 10 most popular games that have a particular platform
-WITH popular_games as (SELECT g.*, p.*, SUM(p.global_sales) AS total_global_sales FROM games g 
-JOIN platforms p ON g.game_id = p.game_id GROUP BY g.game_id, p.game_id ORDER BY total_global_sales DESC)
-SELECT * FROM popular_games WHERE platform = ? ORDER BY total_global_sales DESC LIMIT 10;
+SELECT * FROM game_sales_summary WHERE FIND_IN_SET(?, platforms) ORDER BY total_global_sales DESC LIMIT 10;
 -- Finds the 10 most popular games that have a particular publisher
-WITH popular_games as (SELECT g.game_id, g,name, g,genre, SUM(p.global_sales) AS total_global_sales FROM games g 
-JOIN platforms p ON g.game_id = p.game_id GROUP BY g.game_id, g.name, g.genre ORDER BY total_global_sales DESC)
-SELECT * FROM games WHERE publisher = ? ORDER BY total_global_sales DESC LIMIT 10;
+SELECT * FROM game_sales_summary WHERE FIND_IN_SET(?, publishers) ORDER BY total_global_sales DESC LIMIT 10;
 -- Finds the 10 most popular games that were published in a particular decade
-WITH popular_games as (SELECT g.game_id, g,name, g,genre, SUM(p.global_sales) AS total_global_sales FROM games g 
-JOIN platforms p ON g.game_id = p.game_id GROUP BY g.game_id, g.name, g.genre ORDER BY total_global_sales DESC)
-SELECT * FROM games WHERE FLOOR(year / 10) = FLOOR(? / 10) ORDER BY total_global_sales DESC LIMIT 10;
+SELECT * FROM game_sales_summary WHERE EXISTS (SELECT 1 FROM platforms p WHERE p.game_id = game_sales_summary.game_id 
+AND FLOOR(p.year / 10) = FLOOR(? / 10)) ORDER BY total_global_sales DESC LIMIT 10;
+
+
+
+
+
+
+
+
+
+
+
 -- Finds the 10 most popular games among the user's friends
 WITH followed_users as (SELECT f.followedId as friend_id FROM follows f WHERE f.followingId = ?),
 followed_reviews as (SELECT r.review_id, r.review_of FROM reviews r JOIN followed_users fu ON r.review_by = fu.friend_id)
 SELECT *, COUNT(fr.review_id) as r_count FROM games g JOIN followed_reviews fr ON fr.review_of = g.game_id 
 GROUP BY g.game_id ORDER BY r_count DESC LIMIT 10;
--- Finds the users not followed by the user
-WITH followed_users as (SELECT f.followedId as friend_id FROM follows f WHERE f.followingId = ?)
-SELECT * FROM user u WHERE u.user_id NOT IN (SELECT friend_id FROM followed_users) AND u.user_id <> ?;
+
 
 -- Games Page (for browsing and searching games)
 -- Using the search bar, get games with the title that the user inputs
