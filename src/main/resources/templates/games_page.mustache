@@ -18,16 +18,20 @@
             <button type="submit" class="search-button">Search</button>
         </form>
 
-        <div class="games-container">
-            {{#games}}
-                <div class="game-card">
-                    <h3>{{name}}</h3>
-                    <p><strong>Platform:</strong> {{platform}}</p>
-                    <p><strong>Genre:</strong> {{genre}}</p>
-                    <p><strong>Year:</strong> {{year}}</p>
-                    <p><strong>Publisher:</strong> {{publisher}}</p>
-                  </div>
-            {{/games}}
+{{#games}}
+    <div>
+        <h3>{{name}}</h3>
+        <p><strong>Genre:</strong> {{genre}}</p>
+        <p><strong>Platforms:</strong></p>
+        <ul>
+        {{#platforms}}
+          <li>
+            {{platform_name}} - {{publisher}} ({{year}})
+          </li>
+        {{/platforms}}
+        </ul>
+    </div>
+{{/games}}
 
             {{^games}}
                 <p class="no-games">No games found</p>
