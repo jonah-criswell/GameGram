@@ -30,7 +30,7 @@ public class GamesService {
       if (name == null || name.isEmpty()) {
          return games;
       }
-      final String sql = "SELECT * FROM games WHERE name like ?";
+      final String sql = "select * from games g, platforms p where g.game_id = p.game_id and name like ?";
       try (Connection conn = dataSource.getConnection();
             PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
@@ -54,12 +54,4 @@ public class GamesService {
       }
       return games;
    }
-
-   // Get a list of the most popular games worldwide based on sales
-   @Autowired
-   public List<Game> getMostPopularGlobal() {
-      // not implemented yet
-      // the current SQL statement before jonah updating the schema: SELECT * FROM games ORDER BY global_sales DESC LIMIT 10;
-   }
-
 }
