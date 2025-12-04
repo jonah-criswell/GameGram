@@ -16,6 +16,18 @@ public class Game {
         this.name = name;
         this.genre = genre;
     }
+
+    public String getGame_id() {
+        return game_id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getGenre() {
+        return genre;
+    }
 }
 
- 
+

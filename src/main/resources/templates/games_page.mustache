@@ -1,11 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
-<body>
+{{> fragments/html_header }}
+<body class="game-page">
+  <div class="logo-wrapper">
+    <img src="/css/gg purple logo.png" alt="GameGram Logo">
+        <h1 class="brand-title">GameGram</h1>
+        <img src="/css/gg purple logo.png" alt="GameGram Logo">
+    </div>
+    {{> fragments/navbar }}
+    
+    <div class="container">
 
-<form method="get" action="/games">
-   <input name="query" type="text" placeholder="Search Games">
-   <button type="submit">Search</button>
-</form>
+        <h1>Game Search</h1>
+
+        <form method="get" action="/games" class="search-form">
+            <input name="query" type="text" placeholder="Search Games" class="search-input">
+            <button type="submit" class="search-button">Search</button>
+        </form>
 
 {{#games}}
     <div>
@@ -22,7 +33,11 @@
     </div>
 {{/games}}
 
-<!-- Optional: show message if no games -->
-{{^games}}
-    <p>No games found</p>
-{{/games}}
+            {{^games}}
+                <p class="no-games">No games found</p>
+            {{/games}}
+        </div>
+    </div>
+</body>
+</html>
+
