@@ -1,4 +1,5 @@
 -- queries to set up the database go here
+use gamegram;
 
 CREATE TABLE if not exists games(
    game_id      INTEGER  NOT NULL PRIMARY KEY 
@@ -40,4 +41,21 @@ create table if not exists platforms (
     ,global_sales NUMERIC(5,2)
     ,primary key (game_id, platform),
     constraint platforms_ibfk_1 foreign key (game_id) references games (game_id)
+);
+
+create table if not exists review (
+    reviewId int auto_increment,
+    userId int not null,
+    game_id int not null,
+    hoursPlayed int not null,
+    reviewRating int not null,
+    content varchar(1000) not null,
+    postDate datetime default current_timestamp,
+    heartsCount int default 0,
+    commentsCount int default 0,
+    isHearted boolean default false,
+    isBookmarked boolean default false,
+    primary key (reviewId),
+    constraint review_ibfk_1 foreign key (userId) references user (userId),
+    constraint review_ibfk_2 foreign key (game_id) references games (game_id)
 );

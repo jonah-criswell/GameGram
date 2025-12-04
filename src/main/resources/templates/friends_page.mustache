@@ -1,0 +1,27 @@
+<h1>Your Friends</h1>
+
+<ul class="friends-list">
+  {{#friends}}
+    <li class="friend-item">
+      <h2>{{firstName}} {{lastName}}</h2>
+
+      {{#lastGame}}
+        <div class="movie-info">
+          <p><strong>Most Recent Movie:</strong> {{title}}</p>
+          <p><strong>Rating:</strong> {{rating}} / 10</p>
+          <p><strong>Review:</strong> {{review}}</p>
+        </div>
+      {{/lastGame}}
+
+      {{^lastGame}}
+        <p><em>No movies watched yet.</em></p>
+      {{/lastGame}}
+
+    </li>
+  {{/friends}}
+
+  {{^friends}}
+    <p>You’re not following anyone yet.</p>
+  {{/friends}}
+</ul>
+

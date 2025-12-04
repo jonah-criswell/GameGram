@@ -3,7 +3,7 @@
 [Passwords]
 All user passwords are never stored in plain text. We use the bcrypt hashing algorithm
 to securely hash passwords before storing them in our database. Bcrypt automatically
-generates a unique salt for each password and performs multiple rounds of hashing,
+generates a unique salt for each password and performs one round of hashing,
 making it computationally expensive for attackers to reverse.
 
 [Approach]

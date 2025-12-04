@@ -1,7 +1,7 @@
 package com.csci4370.finalproject.models;
 
 /**
- * Represents a user of the micro blogging platform.
+ * Represents a game of the micro blogging platform.
  */
 public class Game {
 
