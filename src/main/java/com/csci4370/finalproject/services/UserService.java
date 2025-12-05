@@ -73,6 +73,25 @@ public class UserService {
         return false;
     }
 
+    public User getUserById(String userId) throws SQLException {
+        final String sql = "select * from user where userId = ?";
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, userId);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    String id = rs.getString("userId");
+                    String firstName = rs.getString("firstName");
+                    String lastName = rs.getString("lastName");
+                    return new User(id, firstName, lastName);
+                }
+            }
+        }
+        return null;
+    }
+
     /**
      * Logs out the user.
      */
