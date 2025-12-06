@@ -68,72 +68,49 @@ public class GamesService {
 
     }
 
-    // Get a list of the most popular games worldwide based on sales
     public List<GameWithPlatforms> getMostPopularGlobal() {
-        // Map<String, GameWithPlatforms> map = new HashMap<>();
-        List<GameWithPlatforms> list = new ArrayList<>();
+        Map<String, GameWithPlatforms> map = new HashMap<>();
 
-        final String sql = "SELECT " +
-                "    g.game_id, " +
-                "    g.name, " +
-                "    g.genre, " +
-                "    GROUP_CONCAT(DISTINCT p.platform ORDER BY p.platform) AS platforms, " +
-                "    GROUP_CONCAT(DISTINCT p.publisher ORDER BY p.publisher) AS publishers, " +
-                "    GROUP_CONCAT(DISTINCT p.year ORDER BY p.year) AS years, " +
-                "    SUM(p.na_sales) AS total_na_sales, " +
-                "    SUM(p.eu_sales) AS total_eu_sales, " +
-                "    SUM(p.jp_sales) AS total_jp_sales, " +
-                "    SUM(p.other_sales) AS total_other_sales, " +
-                "    SUM(p.global_sales) AS total_global_sales " +
-                "FROM games g " +
-                "JOIN platforms p ON g.game_id = p.game_id " +
-                "GROUP BY g.game_id, g.name, g.genre " +
-                "ORDER BY total_global_sales DESC LIMIT 10;";
+        final String sql = """
+                    SELECT g.game_id, g.name, g.genre, p.platform, p.year, p.publisher,
+                           p.na_sales, p.eu_sales, p.jp_sales, p.other_sales, p.global_sales
+                    FROM games g
+                    JOIN platforms p ON g.game_id = p.game_id
+                    ORDER BY p.global_sales DESC
+                    LIMIT 10
+                """;
+
         try (Connection conn = dataSource.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql);
+                ResultSet rs = pstmt.executeQuery()) {
 
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    GameWithPlatforms game = new GameWithPlatforms(
-                            rs.getString("game_id"),
-                            rs.getString("name"),
-                            rs.getString("genre"),
-                            new ArrayList<>());
-                    String platformsCsv = rs.getString("platforms");
-                    String publishersCsv = rs.getString("publishers");
-                    String yearsCsv = rs.getString("years");
+            while (rs.next()) {
+                String id = rs.getString("game_id");
 
-                    String[] platformArr = platformsCsv != null ? platformsCsv.split(",") : new String[0];
-                    String[] publisherArr = publishersCsv != null ? publishersCsv.split(",") : new String[0];
-                    String[] yearArr = yearsCsv != null ? yearsCsv.split(",") : new String[0];
+                map.putIfAbsent(id, new GameWithPlatforms(
+                        id,
+                        rs.getString("name"),
+                        rs.getString("genre"),
+                        new ArrayList<>()));
 
-                    for (int i = 0; i < platformArr.length; i++) {
-                        int year = yearArr.length > i ? Integer.parseInt(yearArr[i]) : 0;
-                        Platform p = new Platform(
-                                platformArr[i],
-                                publisherArr.length > i ? publisherArr[i] : "Unknown",
-                                year,
-                                rs.getDouble("total_na_sales"),
-                                rs.getDouble("total_eu_sales"),
-                                rs.getDouble("total_jp_sales"),
-                                rs.getDouble("total_other_sales"),
-                                rs.getDouble("total_global_sales"));
-                        game.getPlatforms().add(p);
-                    }
-                    list.add(game);
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
+                Platform platform = new Platform(
+                        rs.getString("platform"),
+                        rs.getString("publisher"),
+                        rs.getInt("year"),
+                        rs.getDouble("na_sales"),
+                        rs.getDouble("eu_sales"),
+                        rs.getDouble("jp_sales"),
+                        rs.getDouble("other_sales"),
+                        rs.getDouble("global_sales"));
+
+                map.get(id).getPlatforms().add(platform);
             }
 
-        }
-
-        catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return list;
-
+        return new ArrayList<>(map.values());
     }
 
 }
