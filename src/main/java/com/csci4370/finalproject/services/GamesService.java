@@ -73,21 +73,21 @@ public class GamesService {
         // Map<String, GameWithPlatforms> map = new HashMap<>();
         List<GameWithPlatforms> list = new ArrayList<>();
 
-        final String sql = "SELECT" +
-                "    g.game_id," +
-                "    g.name," +
-                "    g.genre," +
-                "    GROUP_CONCAT(DISTINCT p.platform ORDER BY p.platform) AS platforms," +
-                "    GROUP_CONCAT(DISTINCT p.publisher ORDER BY p.publisher) AS publishers," +
-                "    GROUP_CONCAT(DISTINCT p.year ORDER BY p.year) AS years," +
-                "    SUM(p.na_sales) AS total_na_sales," +
-                "    SUM(p.eu_sales) AS total_eu_sales," +
-                "    SUM(p.jp_sales) AS total_jp_sales," +
-                "    SUM(p.other_sales) AS total_other_sales," +
-                "    SUM(p.global_sales) AS total_global_sales" +
-                "FROM games g" + //
-                "JOIN platforms p ON g.game_id = p.game_id" +
-                "GROUP BY g.game_id, g.name, g.genre" +
+        final String sql = "SELECT " +
+                "    g.game_id, " +
+                "    g.name, " +
+                "    g.genre, " +
+                "    GROUP_CONCAT(DISTINCT p.platform ORDER BY p.platform) AS platforms, " +
+                "    GROUP_CONCAT(DISTINCT p.publisher ORDER BY p.publisher) AS publishers, " +
+                "    GROUP_CONCAT(DISTINCT p.year ORDER BY p.year) AS years, " +
+                "    SUM(p.na_sales) AS total_na_sales, " +
+                "    SUM(p.eu_sales) AS total_eu_sales, " +
+                "    SUM(p.jp_sales) AS total_jp_sales, " +
+                "    SUM(p.other_sales) AS total_other_sales, " +
+                "    SUM(p.global_sales) AS total_global_sales " +
+                "FROM games g " +
+                "JOIN platforms p ON g.game_id = p.game_id " +
+                "GROUP BY g.game_id, g.name, g.genre " +
                 "ORDER BY total_global_sales DESC LIMIT 10;";
         try (Connection conn = dataSource.getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -103,9 +103,9 @@ public class GamesService {
                     String publishersCsv = rs.getString("publishers");
                     String yearsCsv = rs.getString("years");
 
-                    String[] platformArr = platformsCsv.split(",");
-                    String[] publisherArr = publishersCsv.split(",");
-                    String[] yearArr = yearsCsv.split(",");
+                    String[] platformArr = platformsCsv != null ? platformsCsv.split(",") : new String[0];
+                    String[] publisherArr = publishersCsv != null ? publishersCsv.split(",") : new String[0];
+                    String[] yearArr = yearsCsv != null ? yearsCsv.split(",") : new String[0];
 
                     for (int i = 0; i < platformArr.length; i++) {
                         int year = yearArr.length > i ? Integer.parseInt(yearArr[i]) : 0;
@@ -120,12 +120,12 @@ public class GamesService {
                                 rs.getDouble("total_global_sales"));
                         game.getPlatforms().add(p);
                     }
+                    list.add(game);
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
 
-            
         }
 
         catch (SQLException e) {
