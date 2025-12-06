@@ -81,10 +81,10 @@ public class GamesService {
                 "    GROUP_CONCAT(DISTINCT p.platform ORDER BY p.platform) AS platforms," +
                 "    GROUP_CONCAT(DISTINCT p.publisher ORDER BY p.publisher) AS publishers," +
                 "    GROUP_CONCAT(DISTINCT p.year ORDER BY p.year) AS years," +
-                "    SUM(p.na_sales) AS total_na_sales" +
-                "    SUM(p.eu_sales) AS total_eu_sales" +
-                "    SUM(p.jp_sales) AS total_jp_sales" +
-                "    SUM(p.other_sales) AS total_other_sales" +
+                "    SUM(p.na_sales) AS total_na_sales," +
+                "    SUM(p.eu_sales) AS total_eu_sales," +
+                "    SUM(p.jp_sales) AS total_jp_sales," +
+                "    SUM(p.other_sales) AS total_other_sales," +
                 "    SUM(p.global_sales) AS total_global_sales" +
                 "FROM games g" + //
                 "JOIN platforms p ON g.game_id = p.game_id" +
