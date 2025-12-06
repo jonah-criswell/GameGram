@@ -71,6 +71,29 @@ public class ReviewService {
         }
     }
 
+    public List<Review> getReviewsByGameId(String gameId) {
+        List<Review> reviews = new ArrayList<>();
+        final String reviewSql = "SELECT * FROM review WHERE game_id = ?";
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement reviewStmt = conn.prepareStatement(reviewSql)) {
+            reviewStmt.setString(1, gameId);
+            ResultSet rs = reviewStmt.executeQuery();
+            if (rs.next()) {
+                String reviewId = rs.getString("reviewId");
+                int hoursPlayed = rs.getInt("hoursPlayed");
+                String content = rs.getString("content");
+                int reviewRating = rs.getInt("reviewRating");
+                String reviewDate = rs.getString("postDate");
+                String userId = rs.getString("userId");
+                Review review = new Review(reviewId, content, reviewDate, userService.getUserById(userId), Integer.parseInt(gameId), hoursPlayed, reviewRating, 0, 0, false, false);
+                reviews.add(review);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return reviews;
+    }
+
     // Search posts containing all hashtags in the list, seperated by spaces.
     //TODO: prevent empty searches, fix things like #hashtags being returned for #hashtag. The search should not be returning partial matches.
     // public List<Review> searchReviews(List<String> hashtags) {

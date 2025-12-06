@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+{{> fragments/html_header}}
+
+<body class="profile-page">
+
+    <div class="logo-wrapper">
+        <img src="/css/gg purple logo.png" alt="GameGram Logo">
+        <h1 class="brand-title">GameGram</h1>
+    </div>
+
+    {{> fragments/navbar}}
+
+    <div class="profile-container">
+        <div class="profile-header">
+            <img src="{{profileImagePath}}" alt="Profile" class="profile-picture">
+            <h2>{{firstName}} {{lastName}}</h2>
+        </div>
+
+        <div class="profile-details">
+            <h3>Recent Reviews</h3>
+            <hr>
+
+            <div class="reviews-list">
+            {{#reviews}}
+                <div class="review-card">
+                    <div class="review-header">
+                        <span class="game-title">Game ID: {{game_id}}</span>
+                        <span class="review-date">{{postDate}}</span>
+                    </div>
+
+                    <div class="review-stats">
+                        <span class="rating-badge">{{reviewRating}}/5</span>
+                        <span class="hours-badge">{{hoursPlayed}} hrs</span>
+                    </div>
+                    
+                    <p class="review-content">{{content}}</p>
+
+                    <div class="review-footer">
+                        <span class="icon">
+                            {{#isHearted}}❤️{{/isHearted}}
+                            {{^isHearted}}🤍{{/isHearted}} 
+                            {{heartsCount}}
+                        </span>
+                        
+                        <span class="icon">{{commentsCount}}</span>
+
+                        {{#isBookmarked}}
+                        <span class="icon" title="Bookmarked"></span>
+                        {{/isBookmarked}}
+                    </div>
+                </div>
+            {{/reviews}}
+            
+            {{^reviews}}
+                <p>No reviews posted yet.</p>
+            {{/reviews}}
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
