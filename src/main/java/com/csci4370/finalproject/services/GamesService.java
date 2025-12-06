@@ -69,7 +69,6 @@ public class GamesService {
     }
 
     // Get a list of the most popular games worldwide based on sales
-    @Autowired
     public List<GameWithPlatforms> getMostPopularGlobal() {
         // Map<String, GameWithPlatforms> map = new HashMap<>();
         List<GameWithPlatforms> list = new ArrayList<>();
