@@ -1,6 +1,25 @@
 -- every query used in the code to retrieve stuff on the site goes here, 
 -- along with a comment explaining what each one does and where
 
+-- homepage get 10 most popular games query
+SELECT
+    g.game_id,
+    g.name,
+    g.genre,
+    GROUP_CONCAT(DISTINCT p.platform ORDER BY p.platform) AS platforms,
+    GROUP_CONCAT(DISTINCT p.publisher ORDER BY p.publisher) AS publishers,
+    GROUP_CONCAT(DISTINCT p.year ORDER BY p.year) AS years,
+    SUM(p.na_sales) AS total_na_sales,
+    SUM(p.eu_sales) AS total_eu_sales,
+    SUM(p.jp_sales) AS total_jp_sales,
+    SUM(p.other_sales) AS total_other_sales,
+    SUM(p.global_sales) AS total_global_sales
+FROM games g
+JOIN platforms p ON g.game_id = p.game_id
+GROUP BY g.game_id, g.name, g.genre
+ORDER BY total_global_sales DESC LIMIT 10;
+
+
 -- game summary creation to run after inserting all the data
 CREATE VIEW game_summary AS
 SELECT

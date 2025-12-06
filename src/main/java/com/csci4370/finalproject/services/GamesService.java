@@ -87,7 +87,7 @@ public class GamesService {
                 "    SUM(p.global_sales) AS total_global_sales" +
                 "FROM games g" + //
                 "JOIN platforms p ON g.game_id = p.game_id" +
-                "GROUP BY g.game_id, g.name, g.genre;" +
+                "GROUP BY g.game_id, g.name, g.genre" +
                 "ORDER BY total_global_sales DESC LIMIT 10;";
         try (Connection conn = dataSource.getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -99,30 +99,41 @@ public class GamesService {
                             rs.getString("name"),
                             rs.getString("genre"),
                             new ArrayList<>());
-                    int earliestYear = 0;
-                    String yearsConcat = rs.getString("years");
-                    if (yearsConcat != null && !yearsConcat.isEmpty()) {
-                        String[] split = yearsConcat.split(",");
-                        earliestYear = Integer.parseInt(split[0]);
+                    String platformsCsv = rs.getString("platforms");
+                    String publishersCsv = rs.getString("publishers");
+                    String yearsCsv = rs.getString("years");
+
+                    String[] platformArr = platformsCsv.split(",");
+                    String[] publisherArr = publishersCsv.split(",");
+                    String[] yearArr = yearsCsv.split(",");
+
+                    for (int i = 0; i < platformArr.length; i++) {
+                        int year = yearArr.length > i ? Integer.parseInt(yearArr[i]) : 0;
+                        Platform p = new Platform(
+                                platformArr[i],
+                                publisherArr.length > i ? publisherArr[i] : "Unknown",
+                                year,
+                                rs.getDouble("total_na_sales"),
+                                rs.getDouble("total_eu_sales"),
+                                rs.getDouble("total_jp_sales"),
+                                rs.getDouble("total_other_sales"),
+                                rs.getDouble("total_global_sales"));
+                        game.getPlatforms().add(p);
                     }
-                    Platform summary = new Platform(
-                            rs.getString("platforms"), 
-                            rs.getString("publishers"), 
-                            earliestYear, 
-                            rs.getDouble("na_sales"),
-                            rs.getDouble("eu_sales"),
-                            rs.getDouble("jp_sales"),
-                            rs.getDouble("other_sales"),
-                            rs.getDouble("global_sales"));
-                    game.getPlatforms().add(summary);
-                    list.add(game);
                 }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-        } catch (SQLException e) {
+
+            
+        }
+
+        catch (SQLException e) {
             e.printStackTrace();
         }
 
         return list;
+
     }
 
 }
