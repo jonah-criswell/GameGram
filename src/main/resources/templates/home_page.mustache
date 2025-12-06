@@ -53,6 +53,34 @@
   {{/users}}
 </div>
 
+<!-- Top 10 Most Popular Games Globally -->
+<h2 style="margin-top: 40px; text-align: center;">Top 10 Global Games</h2>
+
+<div class="global-games-container" 
+     style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; margin-top: 20px;">
+
+    {{#mostPopGames}}
+    <div class="game-card" 
+         style="border: 1px solid #ccc; padding: 15px; width: 260px; border-radius: 10px;">
+
+        <h3 style="margin: 0; text-align: center;">{{name}}</h3>
+        <p style="text-align: center; font-style: italic;">{{genre}}</p>
+
+        {{#platforms}}
+        <p><strong>Platforms:</strong> {{platformName}}</p>
+        <p><strong>Publishers:</strong> {{publisher}}</p>
+        <p><strong>Earliest Release:</strong> {{year}}</p>
+
+        <p><strong>Global Sales:</strong> {{globalSales}} million</p>
+        {{/platforms}}
+
+    </div>
+    {{/mostPopGames}}
+
+    {{^mostPopGames}}
+    <p style="text-align:center;">No popular games found.</p>
+    {{/mostPopGames}}
+</div>
 
 
 

@@ -18,6 +18,7 @@ import com.csci4370.finalproject.services.ReviewService;
 import com.csci4370.finalproject.services.GamesService;
 import com.csci4370.finalproject.services.PeopleService;
 import com.csci4370.finalproject.models.User;
+import com.csci4370.finalproject.dto.GameWithPlatforms;
 import com.csci4370.finalproject.models.FollowableUser;
 import com.csci4370.finalproject.models.Game;
 import com.csci4370.finalproject.services.FollowService;
@@ -63,6 +64,19 @@ public class HomeController {
 
         } catch (Exception e){
             mv.addObject("errorMessage", "Unable to load users.");
+            e.printStackTrace();
+        }
+
+        try{
+            List <GameWithPlatforms> mostPopGames = gamesService.getMostPopularGlobal();
+            mv.addObject("mostPopGames", mostPopGames);
+
+            if(mostPopGames.isEmpty()){
+                mv.addObject("isNoContent", true);
+            }
+
+        } catch (Exception e){
+            mv.addObject("errorMessage", "Unable to load most popular games.");
             e.printStackTrace();
         }
 
