@@ -8,7 +8,7 @@
         <img src="/css/gg purple logo.png" alt="GameGram Logo">
    </div>
    {{> fragments/navbar }}
-   <form method="post" action="/games/{{gameId}}" class="search-form">
+   <form method="post" action="/games/{{gameId}}/makereview" class="search-form">
       <label for="rating">Rating:</label>
       <input name="rating" type="number" min="1" max="10" class="search-input">
       <label for="hours_played">Hours Played:</label>

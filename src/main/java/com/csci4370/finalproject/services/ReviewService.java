@@ -50,14 +50,14 @@ public class ReviewService {
 
     public boolean makeReview(int hoursPlayed, int game_id, String content, int reviewRating, User user) {
         // Note the ? marks in the SQL statement. They are placeholders like mentioned above.
-        final String postSql = "insert into review (game_id, hoursPlayed, content, reviewRating, reviewDate, userId) values (?, ?, ?, ?, now(), ?)";
+        final String postSql = "insert into review (game_id, hoursPlayed, content, reviewRating, postDate, userId) values (?, ?, ?, ?, now(), ?)";
         try (Connection conn = dataSource.getConnection();
             PreparedStatement postStmt = conn.prepareStatement(postSql)) {
             postStmt.setInt(1, game_id);
             postStmt.setInt(2, hoursPlayed);
             postStmt.setString(3, content);
             postStmt.setInt(4, reviewRating);
-            postStmt.setString(6, user.getUserId());
+            postStmt.setString(5, user.getUserId());
             int rowsAffected = postStmt.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
@@ -73,7 +73,7 @@ public class ReviewService {
                 PreparedStatement reviewStmt = conn.prepareStatement(reviewSql)) {
             reviewStmt.setString(1, gameId);
             ResultSet rs = reviewStmt.executeQuery();
-            if (rs.next()) {
+            while (rs.next()) {
                 String reviewId = rs.getString("reviewId");
                 int hoursPlayed = rs.getInt("hoursPlayed");
                 String content = rs.getString("content");
