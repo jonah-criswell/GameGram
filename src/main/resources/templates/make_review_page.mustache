@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+{{> fragments/html_header }}
+<body class="game-page">
+  <div class="logo-wrapper">
+    <img src="/css/gg purple logo.png" alt="GameGram Logo">
+        <h1 class="brand-title">GameGram</h1>
+        <img src="/css/gg purple logo.png" alt="GameGram Logo">
+   </div>
+   {{> fragments/navbar }}
+   <form method="post" action="/games/{{gameId}}/makereview" class="search-form">
+      <label for="rating">Rating:</label>
+      <input name="rating" type="number" min="1" max="10" class="search-input">
+      <label for="hours_played">Hours Played:</label>
+      <input name="hours_played" type="number" class="search-input">
+      <input name="content" type="text" placeholder="Write a review..." class="search-input">
+      <button type="submit" class="search-button">Post</button>
+   </form>
+</body>
+</html>

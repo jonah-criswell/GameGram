@@ -48,26 +48,21 @@ public class ReviewService {
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
-    /**
-     * Registers a new user with the given details.
-     * Returns true if registration is successful. If the username already exists,
-     * a SQLException is thrown due to the unique constraint violation, which should
-     * be handled by the caller.
-     */
-    public boolean makeReview(int hoursPlayed, String content, int reviewRating, User user)
-            throws SQLException {
+    public boolean makeReview(int hoursPlayed, int game_id, String content, int reviewRating, User user) {
         // Note the ? marks in the SQL statement. They are placeholders like mentioned above.
-        final String postSql = "insert into review (hoursPlayed, content, reviewRating, reviewDate, userId) values (?, ?, ?, now(), ?)";
+        final String postSql = "insert into review (game_id, hoursPlayed, content, reviewRating, postDate, userId) values (?, ?, ?, ?, now(), ?)";
         try (Connection conn = dataSource.getConnection();
-                PreparedStatement postStmt = conn.prepareStatement(postSql)) {
-            // Following lines replace the placeholders 1-4 with values.
-            postStmt.setInt(1, hoursPlayed);
-            postStmt.setString(2, content);
-            postStmt.setInt(3, reviewRating);
+            PreparedStatement postStmt = conn.prepareStatement(postSql)) {
+            postStmt.setInt(1, game_id);
+            postStmt.setInt(2, hoursPlayed);
+            postStmt.setString(3, content);
+            postStmt.setInt(4, reviewRating);
             postStmt.setString(5, user.getUserId());
-            // Execute the statement and check if rows are affected.
             int rowsAffected = postStmt.executeUpdate();
             return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
@@ -78,7 +73,7 @@ public class ReviewService {
                 PreparedStatement reviewStmt = conn.prepareStatement(reviewSql)) {
             reviewStmt.setString(1, gameId);
             ResultSet rs = reviewStmt.executeQuery();
-            if (rs.next()) {
+            while (rs.next()) {
                 String reviewId = rs.getString("reviewId");
                 int hoursPlayed = rs.getInt("hoursPlayed");
                 String content = rs.getString("content");
