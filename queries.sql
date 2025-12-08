@@ -62,13 +62,21 @@ SELECT * FROM review WHERE game_id = ?;
 
 -- Hearts and Comments for Reviews
 -- When a user hearts a post this stores that in the database. Used on any page displaying posts 
-INSERT INTO review_hearts (review_id, userId) VALUES (?, ?);
+insert into review_hearts (reviewId, userId) values (?, ?);
 --When a user unhearts a post this removes the heart from the database. Used on any page displaying posts 
-DELETE FROM review_hearts WHERE review_id = ? AND userId = ?;
+delete from review_hearts where reviewId = ? and userId = ?;
+-- Everytime a review is liked or unliked, the review's like count is updated
+update review set heartsCount = (
+                        SELECT COUNT(userId) as heart_count FROM review_hearts WHERE reviewId = ?)  
+                        WHERE reviewId = ?;
 -- Access a review's number of hearts
-SELECT COUNT(userId) as heart_count FROM review_hearts WHERE review_id = ?;
+SELECT heartsCount FROM review WHERE reviewId = ?;
 -- When a user posts a comment this stores the comment's information in the database.  
-INSERT INTO review_comments (comment_id, comment_text, comment_date, posted_on, posted_by) VALUES (?, ?, now(), ?, ?);
+INSERT INTO review_comments (commentText, commentDate, reviewId, userId) VALUES (?, now(), ?, ?)
+-- When a user posts a comment this updates the comment count variable for the review
+update review set commentsCount = (
+                        SELECT COUNT(userId) as comment_count FROM review_comments WHERE reviewId = ?)  
+                        WHERE reviewId = ?;
 -- Access a review's number of comments
-SELECT COUNT(comment_id) as comment_count FROM review_comments WHERE posted_on = ?;
+SELECT commentsCount FROM review WHERE reviewId = ?;
 
