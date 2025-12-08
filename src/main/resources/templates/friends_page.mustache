@@ -24,16 +24,27 @@
 
       <!-- Most Recent Game -->
       {{#recentGame}}
-      <div class="game-info" style="text-align: left; margin-top: 10px;">
-          <p><strong>Most Recent Game:</strong> {{gameName}}</p>
-          <p><strong>Rating:</strong> {{starRatingString}}</p>
-          <p><strong>Review:</strong> {{content}}</p>
-      </div>
-      {{/recentGame}}
+<div class="game-info" style="text-align: left; margin-top: 10px;">
+    <p><strong>Most Recent Game:</strong> {{gameName}}</p>
+    <p><strong>Hours Played:</strong> {{hoursPlayed}}</p>
+    <p><strong>Rating:</strong> {{starRatingString}}</p>
+    <p><strong>Review:</strong> {{content}}</p>
+</div>
 
-      {{^recentGame}}
-      <p><em>No Games Played Yet.</em></p>
-      {{/recentGame}}
+<div class="review-footer">
+    <span class="icon">
+        {{#isHearted}}❤️{{/isHearted}}
+        {{^isHearted}}🤍{{/isHearted}}
+        {{heartsCount}}
+    </span>
+
+    <span class="icon">{{commentsCount}}</span>
+
+    {{#isBookmarked}}
+    <span class="icon" title="Bookmarked">🔖</span>
+    {{/isBookmarked}}
+</div>
+{{/recentGame}}
 
       </form>
   </div>

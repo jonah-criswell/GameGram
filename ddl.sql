@@ -59,3 +59,14 @@ create table if not exists review (
     constraint review_ibfk_1 foreign key (userId) references user (userId),
     constraint review_ibfk_2 foreign key (game_id) references games (game_id)
 );
+
+create table if not exists post_comments (
+    commentId int auto_increment,
+    postId int not null,
+    userId int not null,
+    commentText varchar(255) not null,
+    commentDate datetime not null,
+    primary key (commentId),
+    foreign key (userId) references user(userId),
+    foreign key (postId) references review(reviewId)
+);

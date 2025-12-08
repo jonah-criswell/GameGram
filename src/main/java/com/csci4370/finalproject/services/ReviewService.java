@@ -164,6 +164,44 @@ public class ReviewService {
     return review; // will be null if no recent review exists
 }
 
+    public Review getReviewByPostId(String reviewId){
+        Review review = null;
+        final String reviewSql = "SELECT * FROM review WHERE reviewId = ?";
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement reviewStmt = conn.prepareStatement(reviewSql)) {
+            reviewStmt.setString(1, reviewId);
+            ResultSet rs = reviewStmt.executeQuery();
+            if (rs.next()) {
+                int hoursPlayed = rs.getInt("hoursPlayed");
+                String content = rs.getString("content");
+                int reviewRating = rs.getInt("reviewRating");
+                String reviewDate = rs.getString("postDate");
+                String userId = rs.getString("userId");
+                int gameIdInt = rs.getInt("game_id"); // from your review query
+                String gameName = gamesService.getGameById(gameIdInt); // returns game name
+
+                review = new Review(
+                    reviewId,
+                    content,
+                    reviewDate,
+                    userService.getUserById(userId),
+                    gameIdInt,
+                    hoursPlayed,
+                    reviewRating,
+                    gameName,  // <- string for the constructor
+                    0, // heartsCount
+                    0, // commentsCount
+                    false, // isHearted
+                    false  // isBookmarked
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return review;
+    }
+
+
 
     // Search posts containing all hashtags in the list, seperated by spaces.
     //TODO: prevent empty searches, fix things like #hashtags being returned for #hashtag. The search should not be returning partial matches.
@@ -325,37 +363,37 @@ public class ReviewService {
 
 
 
-//     public boolean addComment(String postId, User user,  String comment) throws SQLException {
-//         /**
-//          * SQL COMMAND TO CREATE TABLE FOR COMMENTS
-//          * create table if not exists post_comments (
-//          *  commentId int auto_increment,
-//          *  postId int not null,
-//          *  userId int not null,
-//          *  commentText varchar(255) not null,
-//          *  commentDate datetime not null,
-//          *  primary key (commentId),
-//          *  foreign key (userId) references user(userId),
-//          *  foreign key (postId) references post(postId)
-//          *  );
-//          */
+    public boolean addComment(String postId, User user,  String comment) throws SQLException {
+        /**
+         * SQL COMMAND TO CREATE TABLE FOR COMMENTS
+         * create table if not exists post_comments (
+         *  commentId int auto_increment,
+         *  postId int not null,
+         *  userId int not null,
+         *  commentText varchar(255) not null,
+         *  commentDate datetime not null,
+         *  primary key (commentId),
+         *  foreign key (userId) references user(userId),
+         *  foreign key (postId) references post(postId)
+         *  );
+         */
 
-//         final String insertCommentSql = "insert into post_comments (postId, userId, commentText, commentDate) values (?, ?, ?, now())";
-//         final String updateCommentsSql = "update full_post set CommentsCount = CommentsCount + 1 where postId = ?";
-//         try (Connection conn = dataSource.getConnection();
-//                 PreparedStatement updateCommentsStmt = conn.prepareStatement(updateCommentsSql))
-//     {            updateCommentsStmt.setString(1, postId); 
-//             int rowsAffectedCountUpdate = updateCommentsStmt.executeUpdate();
-//     }
-//         try (Connection conn = dataSource.getConnection();
-//                 PreparedStatement insertCommentStmt = conn.prepareStatement(insertCommentSql)) {
-//             insertCommentStmt.setString(1, postId);
-//             insertCommentStmt.setString(2, user.getUserId());
-//             insertCommentStmt.setString(3, comment);
-//             int rowsAffected = insertCommentStmt.executeUpdate();
-//             return rowsAffected > 0;
-//         }
-//     }
+        final String insertCommentSql = "insert into post_comments (postId, userId, commentText, commentDate) values (?, ?, ?, now())";
+        final String updateCommentsSql = "update full_post set CommentsCount = CommentsCount + 1 where postId = ?";
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement updateCommentsStmt = conn.prepareStatement(updateCommentsSql))
+    {            updateCommentsStmt.setString(1, postId); 
+            int rowsAffectedCountUpdate = updateCommentsStmt.executeUpdate();
+    }
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement insertCommentStmt = conn.prepareStatement(insertCommentSql)) {
+            insertCommentStmt.setString(1, postId);
+            insertCommentStmt.setString(2, user.getUserId());
+            insertCommentStmt.setString(3, comment);
+            int rowsAffected = insertCommentStmt.executeUpdate();
+            return rowsAffected > 0;
+        }
+    }
 
 
 //     public boolean addOrRemoveBookmark(String postId, User user, boolean isAdd) throws SQLException {

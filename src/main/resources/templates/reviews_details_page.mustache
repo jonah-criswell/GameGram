@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+{{> fragments/html_header }}
+
+<body>
+    {{> fragments/navbar }}
+
+    <div class="container" style="max-width: 600px; margin: auto;">
+
+        <h1>Review Details</h1>
+
+        {{#review}}
+            <div style="text-align: center; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
+                
+                {{#user}}
+                <img src="{{profileImagePath}}" style="width:80px; height:80px; border-radius:50%; margin-bottom:10px;">
+                <h2>{{firstName}} {{lastName}}</h2>
+                {{/user}}
+
+                <h3>{{gameName}}</h3>
+
+                <p><strong>Rating:</strong> {{starRatingString}}</p>
+
+                <p><strong>Hours Played:</strong> {{hoursPlayed}}</p>
+
+                <p><strong>Review:</strong><br>{{content}}</p>
+
+                <div style="margin-top: 15px;">
+                    <span>
+                        {{#isHearted}}❤️{{/isHearted}}
+                        {{^isHearted}}🤍{{/isHearted}}
+                        {{heartsCount}}
+                    </span>
+                    
+                    <span style="margin-left: 15px;">💬 {{commentsCount}}</span>
+                    {{> fragments/comment_box }}
+                </div>
+
+            </div>
+        {{/review}}
+
+    </div>
+</body>
+</html>
