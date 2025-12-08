@@ -89,6 +89,55 @@ public class ReviewService {
         return reviews;
     }
 
+    public Review getRecentReviewsFromFollowedUsers(String userId) {
+    Review review = null;
+    final String reviewSql = """
+        SELECT r.*, g.name as gameName
+        FROM review r
+        JOIN games g ON r.game_id = g.game_id
+        WHERE r.userId = ?
+        ORDER BY r.postDate DESC
+        LIMIT 1
+    """;
+
+    try (Connection conn = dataSource.getConnection();
+         PreparedStatement reviewStmt = conn.prepareStatement(reviewSql)) {
+
+        reviewStmt.setString(1, userId);
+        try (ResultSet rs = reviewStmt.executeQuery()) {
+            if (rs.next()) { // <-- check if there’s a row before reading
+                String reviewId = rs.getString("reviewId");
+                int hoursPlayed = rs.getInt("hoursPlayed");
+                String content = rs.getString("content");
+                int reviewRating = rs.getInt("reviewRating");
+                String reviewDate = rs.getString("postDate");
+                int gameId = rs.getInt("game_id");
+                String reviewUserId = rs.getString("userId");
+
+                review = new Review(
+                    reviewId,
+                    content,
+                    reviewDate,
+                    userService.getUserById(reviewUserId),
+                    gameId,
+                    hoursPlayed,
+                    reviewRating,
+                    0, // heartsCount placeholder
+                    0, // commentsCount placeholder
+                    false, // isHearted placeholder
+                    false  // isBookmarked placeholder
+                );
+            }
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return review; // will be null if no recent review exists
+}
+
+
     // Search posts containing all hashtags in the list, seperated by spaces.
     //TODO: prevent empty searches, fix things like #hashtags being returned for #hashtag. The search should not be returning partial matches.
     // public List<Review> searchReviews(List<String> hashtags) {

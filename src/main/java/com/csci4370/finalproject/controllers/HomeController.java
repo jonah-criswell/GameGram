@@ -22,6 +22,7 @@ import com.csci4370.finalproject.dto.GameWithPlatforms;
 import com.csci4370.finalproject.models.FollowableUser;
 import com.csci4370.finalproject.models.Game;
 import com.csci4370.finalproject.services.FollowService;
+import com.csci4370.finalproject.models.Review;
 
 @Controller
 @RequestMapping
@@ -56,11 +57,20 @@ public class HomeController {
 
         try{
             List <FollowableUser> users = peopleService.getFollowableUsers(currentUser.getUserId());
-            mv.addObject("users", users);
 
             if(users.isEmpty()){
                 mv.addObject("isNoContent", true);
             }
+            for (FollowableUser user1 : users) {
+                System.out.println("User ID: " + user1.getUserId());
+                Review recentGame = reviewService.getRecentReviewsFromFollowedUsers(user1.getUserId());
+                user1.setRecentGame(recentGame);
+                // if (recentGame != null) {
+                //     mv.addObject("isNoGame", true);
+                // }
+            }
+            
+            mv.addObject("users", users);
 
         } catch (Exception e){
             mv.addObject("errorMessage", "Unable to load users.");
