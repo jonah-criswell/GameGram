@@ -22,6 +22,8 @@ import org.springframework.web.context.annotation.SessionScope;
 //import uga.menik.csx370.models.User;
 import com.csci4370.finalproject.models.User;
 import com.csci4370.finalproject.models.Review;
+import com.csci4370.finalproject.services.UserService;
+import com.csci4370.finalproject.services.GamesService;
 
 
 @Service
@@ -32,6 +34,8 @@ public class ReviewService {
     private final DataSource dataSource;
     // userService provides user-related operations within this session.
     private final UserService userService;
+
+    private final GamesService gamesService;
     // passwordEncoder is used for password security.
     private final BCryptPasswordEncoder passwordEncoder;
     // This holds 
@@ -45,10 +49,11 @@ public class ReviewService {
     public ReviewService(DataSource dataSource, UserService userService) {
         this.dataSource = dataSource;
         this.userService = userService;
+        this.gamesService = new GamesService(dataSource);
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
-    public boolean makeReview(int hoursPlayed, int game_id, String content, int reviewRating, User user) {
+    public boolean makeReview(int hoursPlayed, int game_id, String content, int reviewRating, User user, String gameName) {
         // Note the ? marks in the SQL statement. They are placeholders like mentioned above.
         final String postSql = "insert into review (game_id, hoursPlayed, content, reviewRating, postDate, userId) values (?, ?, ?, ?, now(), ?)";
         try (Connection conn = dataSource.getConnection();
@@ -80,7 +85,25 @@ public class ReviewService {
                 int reviewRating = rs.getInt("reviewRating");
                 String reviewDate = rs.getString("postDate");
                 String userId = rs.getString("userId");
-                Review review = new Review(reviewId, content, reviewDate, userService.getUserById(userId), Integer.parseInt(gameId), hoursPlayed, reviewRating, 0, 0, false, false);
+                int gameIdInt = rs.getInt("game_id"); // from your review query
+                String gameName = gamesService.getGameById(gameIdInt); // returns game name
+
+                Review review = new Review(
+                    reviewId,
+                    content,
+                    reviewDate,
+                    userService.getUserById(userId),
+                    gameIdInt,
+                    hoursPlayed,
+                    reviewRating,
+                    gameName,  // <- string for the constructor
+                    0, // heartsCount
+                    0, // commentsCount
+                    false, // isHearted
+                    false  // isBookmarked
+                );
+
+                //Review review = new Review(reviewId, content, reviewDate, userService.getUserById(userId), Integer.parseInt(gameId), hoursPlayed, reviewRating, GamesService.getGameById(gameId) 0, 0, false, false);
                 reviews.add(review);
             }
         } catch (SQLException e) {
@@ -113,20 +136,24 @@ public class ReviewService {
                 String reviewDate = rs.getString("postDate");
                 int gameId = rs.getInt("game_id");
                 String reviewUserId = rs.getString("userId");
+                //int gameIdInt = gameId.parseInt(); // from your review query
+                String gameName = gamesService.getGameById(gameId); // returns game name
 
                 review = new Review(
                     reviewId,
                     content,
                     reviewDate,
-                    userService.getUserById(reviewUserId),
+                    userService.getUserById(userId),
                     gameId,
                     hoursPlayed,
                     reviewRating,
-                    0, // heartsCount placeholder
-                    0, // commentsCount placeholder
-                    false, // isHearted placeholder
-                    false  // isBookmarked placeholder
+                    gameName,  // <- string for the constructor
+                    0, // heartsCount
+                    0, // commentsCount
+                    false, // isHearted
+                    false  // isBookmarked
                 );
+
             }
         }
 

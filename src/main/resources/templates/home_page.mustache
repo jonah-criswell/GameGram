@@ -23,7 +23,7 @@
 
       <!-- Recent Game Info -->
       {{#recentGame}}
-      <p><strong>Most Recent Game:</strong> {{game_id}}</p>
+      <p><strong>Most Recent Game:</strong> {{gameName}}</p>
       <p><strong>Rating:</strong> {{reviewRating}}</p>
       <p><strong>Review:</strong> {{content}}</p>
       {{/recentGame}}
@@ -34,7 +34,7 @@
       <!-- Follow / Unfollow Form -->
       <form action="/follow" method="post" style="margin-top: 10px;">
     <input type="hidden" name="followedId" value="{{userId}}">
-    <input type="hidden" name="isFollow" value="{{isFollowed}}">
+    <input type="hidden" name="isFollowed" value="{{isFollowed}}">
     <button type="submit" style="
         padding: 8px 15px;
         border: none;

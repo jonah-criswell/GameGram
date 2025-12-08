@@ -65,9 +65,6 @@ public class HomeController {
                 System.out.println("User ID: " + user1.getUserId());
                 Review recentGame = reviewService.getRecentReviewsFromFollowedUsers(user1.getUserId());
                 user1.setRecentGame(recentGame);
-                // if (recentGame != null) {
-                //     mv.addObject("isNoGame", true);
-                // }
             }
             
             mv.addObject("users", users);

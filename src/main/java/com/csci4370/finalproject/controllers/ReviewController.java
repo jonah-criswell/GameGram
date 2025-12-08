@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.csci4370.finalproject.models.Game;
+import com.csci4370.finalproject.services.GamesService;
 import com.csci4370.finalproject.services.ReviewService;
 import com.csci4370.finalproject.services.UserService;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,11 +19,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class ReviewController {
    private final ReviewService reviewService;
    private final UserService userService;
+   private final GamesService gamesService;
 
    @Autowired
-   public ReviewController(ReviewService reviewService, UserService userService) {
+   public ReviewController(ReviewService reviewService, UserService userService, GamesService gamesService) {
       this.reviewService = reviewService;
       this.userService = userService;
+      this.gamesService = gamesService;
    }
 
    @GetMapping
@@ -32,7 +37,7 @@ public class ReviewController {
 
    @PostMapping
    public String makeReview(@PathVariable String gameId, @RequestParam("rating") int rating, @RequestParam("hours_played") int hoursPlayed, @RequestParam("content") String reviewText) {
-      reviewService.makeReview(hoursPlayed, Integer.parseInt(gameId), reviewText, rating, userService.getLoggedInUser());
+      reviewService.makeReview(hoursPlayed, Integer.parseInt(gameId), reviewText, rating, userService.getLoggedInUser(), gamesService.getGameById(Integer.parseInt(gameId)));
       return "redirect:/games/" + gameId;
    }
 }
