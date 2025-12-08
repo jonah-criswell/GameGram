@@ -19,6 +19,9 @@ public class Review extends BasicPost {
     private final boolean isHearted;
 
     private final boolean isBookmarked;
+        
+    private String starRatingString;
+
 
     /**
      * Constructs a Review with specified details.
@@ -49,6 +52,7 @@ public class Review extends BasicPost {
         this.commentsCount = commentsCount;
         this.isHearted = isHearted;
         this.isBookmarked = isBookmarked;
+        this.starRatingString = "⭐".repeat(reviewRating / 2);
     }
 
     /**
@@ -120,6 +124,14 @@ public class Review extends BasicPost {
     public boolean isBookmarked() {
         return isBookmarked;
     }
+
+    /**
+     * Gets the rating turned into stars for display.
+     */
+     public String getStarRatingString() {
+        return starRatingString;
+    }
+
 
 }
 

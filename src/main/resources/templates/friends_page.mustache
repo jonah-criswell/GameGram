@@ -1,27 +1,45 @@
 <h1>Your Friends</h1>
 
-<ul class="friends-list">
+{{>fragments/html_header}}
+
+<body class="home-page">
+
+    <div class="logo-wrapper">
+        <img src="/css/gg purple logo.png" alt="GameGram Logo">
+        <h1 class="brand-title">GameGram</h1>
+        <img src="/css/gg purple logo.png" alt="GameGram Logo">
+    </div>
+
+    {{>fragments/navbar}}
+<h2 style="text-align: center; margin-bottom: 30px;">Your Friends</h2>
+
+
+<div class="friends-container" style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;">
   {{#friends}}
-    <li class="friend-item">
-      <h2>{{firstName}} {{lastName}}</h2>
+  <div class="friend-card" style="border: 1px solid #ccc; padding: 15px; width: 30%; box-sizing: border-box; text-align: center; border-radius: 8px;">
+      <!-- User avatar and info -->
+      <img src="{{profileImagePath}}" alt="User avatar" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 10px;">
+      <h3>{{firstName}} {{lastName}}</h3>
+      <div class="last-active" style="font-size: 0.9em; color: gray; margin-bottom: 10px;">Last active: {{lastActiveDate}}</div>
 
-      {{#lastGame}}
-        <div class="movie-info">
-          <p><strong>Most Recent Movie:</strong> {{title}}</p>
-          <p><strong>Rating:</strong> {{rating}} / 10</p>
-          <p><strong>Review:</strong> {{review}}</p>
-        </div>
-      {{/lastGame}}
+      <!-- Most Recent Game -->
+      {{#recentGame}}
+      <div class="game-info" style="text-align: left; margin-top: 10px;">
+          <p><strong>Most Recent Game:</strong> {{gameName}}</p>
+          <p><strong>Rating:</strong> {{starRatingString}}</p>
+          <p><strong>Review:</strong> {{content}}</p>
+      </div>
+      {{/recentGame}}
 
-      {{^lastGame}}
-        <p><em>No movies watched yet.</em></p>
-      {{/lastGame}}
+      {{^recentGame}}
+      <p><em>No Games Played Yet.</em></p>
+      {{/recentGame}}
 
-    </li>
+      </form>
+  </div>
   {{/friends}}
 
   {{^friends}}
-    <p>You’re not following anyone yet.</p>
+  <p style="text-align: center;">You’re not following anyone yet.</p>
   {{/friends}}
-</ul>
-
+</div>
