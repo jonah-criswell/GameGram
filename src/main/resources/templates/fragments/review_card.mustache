@@ -1,0 +1,49 @@
+<div class="review-card" style="background-color: #1a1a1a; border: 1px solid #333; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); text-align: left; width: 100%; box-sizing: border-box; color: #ffffff; font-family: sans-serif;">
+    
+    <div class="review-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; border-bottom: 1px solid #2a2a2a; padding-bottom: 12px;">
+        
+        <div class="review-user-info" style="display: flex; align-items: center; gap: 12px;">
+            {{#user}}
+            <img src="{{profileImagePath}}"  
+                 alt="{{firstName}}" 
+                 class="review-avatar"
+                 style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid #ff00cc;">
+            
+            <div class="review-meta" style="display: flex; flex-direction: column;">
+                <span class="review-author" style="font-weight: bold; color: #fff; font-size: 1rem;">{{firstName}} {{lastName}}</span>
+                <span class="review-date" style="font-size: 0.8rem; color: #888;">{{postDate}}</span>
+            </div>
+            {{/user}}
+        </div>
+
+        <div class="review-rating-badge" style="background: linear-gradient(90deg, #ff00cc, #333399); color: white; padding: 6px 12px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; box-shadow: 0 2px 5px rgba(255, 0, 204, 0.2); white-space: nowrap;">
+            ★ {{reviewRating}}/5
+        </div>
+    </div>
+
+    <div class="review-content" style="color: #ddd; line-height: 1.6; font-size: 1rem; margin-bottom: 15px;">
+        <p style="margin: 0;">{{content}}</p>
+    </div>
+
+    <div class="review-footer" style="display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; color: #aaa;">
+        
+        <div class="review-stat" style="display: flex; align-items: center; gap: 6px;">
+            <span class="hours-played" style="background-color: #333; padding: 4px 10px; border-radius: 6px; color: #ccc; font-size: 0.8rem; border: 1px solid #444;">
+                <i class="far fa-clock"></i> {{hoursPlayed}} hrs played
+            </span>
+            
+            {{#gameName}}
+                <span style="margin-left: 10px;">on <a href="/games/{{game_id}}" class="game-name-tag" style="color: #ff00cc; font-weight: bold; text-decoration: none;">{{gameName}}</a></span>
+            {{/gameName}}
+        </div>
+
+        <div class="review-stat" style="display: flex; align-items: center; gap: 15px;">
+            <span>
+                {{#isHearted}}<i class="fas fa-heart"></i>{{/isHearted}}{{^isHearted}}<i class="far fa-heart"></i>{{/isHearted}} 
+                {{heartsCount}}
+            </span>
+            
+            <span>💬 {{commentsCount}}</span>
+        </div>
+    </div>
+</div>

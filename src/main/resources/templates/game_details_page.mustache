@@ -1,27 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
-{{> fragments/html_header }}
+{{> fragments/html_header}}
+
 <body class="game-page">
-  <div class="logo-wrapper">
-    <img src="/css/gg purple logo.png" alt="GameGram Logo">
+
+    <div class="logo-wrapper">
+        <img src="/css/gg purple logo.png" alt="GameGram Logo">
         <h1 class="brand-title">GameGram</h1>
         <img src="/css/gg purple logo.png" alt="GameGram Logo">
-   </div>
-   {{> fragments/navbar }}
-    
+    </div>
 
-   <a href="/games/{{gameId}}/makereview" class="button">Write a Review</a>
-   <div class="container">
-      <ul>
-         {{#reviews}}
-            <li>
-               <h2>{{content}}</h2>
-               {{#user}}
-                  <img src="{{profileImagePath}}" alt="Profile Image">
-                  <p>{{firstName}} {{lastName}}</p>
-               {{/user}}
-            </li>
-         {{/reviews}}
-      </ul>
-   </div>
+    {{> fragments/navbar}}
+
+    <div class="container" style="max-width: 800px; margin: 0 auto;">
+        
+        <div style="text-align: center; margin-bottom: 40px;">
+            <h1 style="text-transform: uppercase; font-size: 3rem; margin-bottom: 15px;">{{gameId}}</h1>
+            
+            <a href="/games/{{gameId}}/makereview" class="login-btn" style="text-decoration: none; display: inline-block; width: auto; padding: 12px 30px;">
+                Write a Review
+            </a>
+        </div>
+
+        <div class="reviews-list">
+            {{#reviews}}
+                {{> fragments/review_card }} 
+                {{/reviews}}
+
+            {{^reviews}}
+                <div style="text-align: center; color: #666; margin-top: 40px;">
+                    <p>No reviews yet. Be the first to review this game!</p>
+                </div>
+            {{/reviews}}
+        </div>
+    </div>
+
 </body>
+</html>
