@@ -131,6 +131,36 @@ public class ReviewService {
 
     }
 
+    public int getHeartCount(String reviewId) {
+        int count = 0;
+        
+        final String updateHeartCountSql = "update review set heartsCount = (" +
+                "SELECT COUNT(userId) as heart_count FROM review_hearts WHERE reviewId = ?) " +
+                "WHERE reviewId = ?";
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement updateHeartsCountStmt = conn.prepareStatement(updateHeartCountSql)) {
+            updateHeartsCountStmt.setString(1, reviewId);
+            updateHeartsCountStmt.setString(2, reviewId);
+            int rowsAffectedCountUpdate = updateHeartsCountStmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        final String accessHeartCountSql = "SELECT heartsCount FROM review WHERE reviewId = ?";
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement accessHeartsCountStmt = conn.prepareStatement(accessHeartCountSql)) {
+            accessHeartsCountStmt.setString(1, reviewId);
+            ResultSet rs = accessHeartsCountStmt.executeQuery();
+            count = rs.getInt("heartsCount");
+        }
+
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return count;
+
+    }
+
     public boolean addComment(String reviewId, User user, String comment) throws SQLException {
 
         boolean testBoolean = false;
@@ -156,6 +186,36 @@ public class ReviewService {
         }
 
         return testBoolean;
+
+    }
+
+    public int getCommentCount(String reviewId) {
+        int count = 0;
+        
+        final String updateCommentCountSql = "update review set commentsCount = (" +
+                "SELECT COUNT(userId) as comment_count FROM review_comments WHERE reviewId = ?) " +
+                "WHERE reviewId = ?";
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement updateCommentsCountStmt = conn.prepareStatement(updateCommentCountSql)) {
+            updateCommentsCountStmt.setString(1, reviewId);
+            updateCommentsCountStmt.setString(2, reviewId);
+            int rowsAffectedCountUpdate = updateCommentsCountStmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        final String accessHeartCountSql = "SELECT commentsCount FROM review WHERE reviewId = ?";
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement accessHeartsCountStmt = conn.prepareStatement(accessHeartCountSql)) {
+            accessHeartsCountStmt.setString(1, reviewId);
+            ResultSet rs = accessHeartsCountStmt.executeQuery();
+            count = rs.getInt("commentsCount");
+        }
+
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return count;
 
     }
 
