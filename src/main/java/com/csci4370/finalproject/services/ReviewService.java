@@ -15,14 +15,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.SessionScope;
 
-// import uga.menik.csx370.models.ExpandedPost;
-// import uga.menik.csx370.models.Comment;
-// import uga.menik.csx370.models.Post;
-//import uga.menik.csx370.models.User;
-import com.csci4370.finalproject.models.User;
 import com.csci4370.finalproject.models.Review;
-import com.csci4370.finalproject.services.UserService;
-import com.csci4370.finalproject.services.GamesService;
+import com.csci4370.finalproject.models.User;
 
 @Service
 @SessionScope
@@ -44,14 +38,14 @@ public class ReviewService {
      * inversion of control.
      */
     @Autowired
-    public ReviewService(DataSource dataSource, UserService userService) {
+    public ReviewService(DataSource dataSource, UserService userService, GamesService gamesService) {
         this.dataSource = dataSource;
         this.userService = userService;
-        this.gamesService = new GamesService(dataSource);
+        this.gamesService = gamesService;
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
-    public boolean makeReview(int hoursPlayed, int game_id, String content, int reviewRating, User user, String gameName) {
+    public boolean makeReview(int hoursPlayed, int game_id, String content, int reviewRating, User user) {
         // Note the ? marks in the SQL statement. They are placeholders like mentioned above.
         final String postSql = "insert into review (game_id, hoursPlayed, content, reviewRating, postDate, userId) values (?, ?, ?, ?, now(), ?)";
         try (Connection conn = dataSource.getConnection();
@@ -141,7 +135,7 @@ public class ReviewService {
                     reviewId,
                     content,
                     reviewDate,
-                    userService.getUserById(userId),
+                    userService.getUserById(reviewUserId),
                     gameId,
                     hoursPlayed,
                     reviewRating,
@@ -199,6 +193,74 @@ public class ReviewService {
         return review;
     }
 
+     public boolean addOrRemoveHeart(String reviewId, User user, boolean isAdd) throws SQLException {
+        boolean testBoolean = false;
+        if (isAdd) {
+            final String updateHeartSql = "insert into review_hearts (reviewId, userId) values (?, ?)";
+            try (Connection conn = dataSource.getConnection();
+                    PreparedStatement updateHeartStmt = conn.prepareStatement(updateHeartSql)) {
+                updateHeartStmt.setString(1, reviewId);
+                updateHeartStmt.setString(2, user.getUserId());
+                int rowsAffected = updateHeartStmt.executeUpdate();
+                testBoolean = rowsAffected > 0;
+    }
+
+        } else {
+            final String deleteBookmarkSql = "delete from review_hearts where reviewId = ? and userId = ?";
+            try (Connection conn = dataSource.getConnection();
+                    PreparedStatement deleteBookmarkStmt = conn.prepareStatement(deleteBookmarkSql)) {
+                deleteBookmarkStmt.setString(1, reviewId);
+                deleteBookmarkStmt.setString(2, user.getUserId());
+                int rowsAffected = deleteBookmarkStmt.executeUpdate();
+                testBoolean = rowsAffected > 0;
+    }
+    }
+    // update the heart count here
+        final String updateHeartCountSql = "update review set heartsCount = (" +
+                "SELECT COUNT(userId) as heart_count FROM review_hearts WHERE reviewId = ?) " +
+                "WHERE reviewId = ?";
+        try (Connection conn = dataSource.getConnection();
+        PreparedStatement updateHeartsCountStmt = conn.prepareStatement(updateHeartCountSql)) {
+            updateHeartsCountStmt.setString(1, reviewId);
+            updateHeartsCountStmt.setString(2, reviewId);
+            int rowsAffectedCountUpdate = updateHeartsCountStmt.executeUpdate();
+            testBoolean = rowsAffectedCountUpdate > 0;
+        }
+
+        return testBoolean;
+
+    }
+
+    public int getHeartCount(String reviewId) {
+        int count = 0;
+        
+        final String updateHeartCountSql = "update review set heartsCount = (" +
+                "SELECT COUNT(userId) as heart_count FROM review_hearts WHERE reviewId = ?) " +
+                "WHERE reviewId = ?";
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement updateHeartsCountStmt = conn.prepareStatement(updateHeartCountSql)) {
+            updateHeartsCountStmt.setString(1, reviewId);
+            updateHeartsCountStmt.setString(2, reviewId);
+            int rowsAffectedCountUpdate = updateHeartsCountStmt.executeUpdate();
+    } catch (SQLException e) {
+    e.printStackTrace();
+    }
+        final String accessHeartCountSql = "SELECT heartsCount FROM review WHERE reviewId = ?";
+    try (Connection conn = dataSource.getConnection();
+                PreparedStatement accessHeartsCountStmt = conn.prepareStatement(accessHeartCountSql)) {
+            accessHeartsCountStmt.setString(1, reviewId);
+            ResultSet rs = accessHeartsCountStmt.executeQuery();
+            count = rs.getInt("heartsCount");
+        }
+
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return count;
+
+    }
+
 
 
     // // Search posts containing all hashtags in the list, seperated by spaces.
@@ -254,35 +316,6 @@ public class ReviewService {
 
     // }
 
-    public int getHeartCount(String reviewId) {
-        int count = 0;
-        
-        final String updateHeartCountSql = "update review set heartsCount = (" +
-                "SELECT COUNT(userId) as heart_count FROM review_hearts WHERE reviewId = ?) " +
-                "WHERE reviewId = ?";
-        try (Connection conn = dataSource.getConnection();
-                PreparedStatement updateHeartsCountStmt = conn.prepareStatement(updateHeartCountSql)) {
-            updateHeartsCountStmt.setString(1, reviewId);
-            updateHeartsCountStmt.setString(2, reviewId);
-            int rowsAffectedCountUpdate = updateHeartsCountStmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        final String accessHeartCountSql = "SELECT heartsCount FROM review WHERE reviewId = ?";
-        try (Connection conn = dataSource.getConnection();
-                PreparedStatement accessHeartsCountStmt = conn.prepareStatement(accessHeartCountSql)) {
-            accessHeartsCountStmt.setString(1, reviewId);
-            ResultSet rs = accessHeartsCountStmt.executeQuery();
-            count = rs.getInt("heartsCount");
-        }
-
-        catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return count;
-
-    }
 
     public boolean addComment(String reviewId, User user, String comment) throws SQLException {
 

@@ -236,3 +236,16 @@
     border-radius: 4px;
     cursor: pointer;
 }
+
+/* Friend name links styling */
+.friend-name-link {
+    color: #ff00cc;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.friend-name-link:hover {
+    color: #333399;
+    text-decoration: underline;
+}

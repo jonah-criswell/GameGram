@@ -40,7 +40,8 @@ public class ReviewController {
 
    @PostMapping
    public String makeReview(@PathVariable String gameId, @RequestParam("rating") int rating, @RequestParam("hours_played") int hoursPlayed, @RequestParam("content") String reviewText) {
-      reviewService.makeReview(hoursPlayed, Integer.parseInt(gameId), reviewText, rating, userService.getLoggedInUser(), gamesService.getGameById(Integer.parseInt(gameId)));
+      reviewService.makeReview(hoursPlayed, Integer.parseInt(gameId), reviewText, rating, userService.getLoggedInUser());
+      
       return "redirect:/games/" + gameId;
    }
 

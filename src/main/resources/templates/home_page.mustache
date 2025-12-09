@@ -21,7 +21,7 @@
   <div class="friend-card" style="border: 1px solid #ccc; padding: 10px; width: 200px; flex: 0 0 auto; text-align: center;">
       <!-- User info -->
       <img src="{{profileImagePath}}" alt="User avatar" style="width: 80px; height: 80px; border-radius: 50%;">
-      <h3>{{firstName}} {{lastName}}</h3>
+      <h3><a href="/profile?userId={{userId}}" class="friend-name-link">{{firstName}} {{lastName}}</a></h3>
       <div class="last-active">Last active: {{lastActiveDate}}</div>
 
       <!-- Recent Game Info -->

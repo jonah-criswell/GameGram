@@ -1,13 +1,13 @@
 package com.csci4370.finalproject.services;
 
-import java.util.List;
-import java.util.Map;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.csci4370.finalproject.dto.GameWithPlatforms;
-import com.csci4370.finalproject.models.Game;
 import com.csci4370.finalproject.models.Platform;
 
 @Service
@@ -38,8 +37,7 @@ public class GamesService {
                     WHERE g.name LIKE ?
                 """;
 
-        try (Connection conn = dataSource.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = dataSource.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, "%" + name + "%");
 
@@ -81,9 +79,7 @@ public class GamesService {
                     LIMIT 10
                 """;
 
-        try (Connection conn = dataSource.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql);
-                ResultSet rs = pstmt.executeQuery()) {
+        try (Connection conn = dataSource.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
 
             while (rs.next()) {
                 String id = rs.getString("game_id");
@@ -115,28 +111,19 @@ public class GamesService {
     }
 
     public String getGameById(int gameId) {
-    Game game = null;
-    String gameIdStr = String.valueOf(gameId);
-    final String sql = "SELECT * FROM games WHERE game_id = ?";
+        final String sql = "SELECT name FROM games WHERE game_id = ?";
 
-    try (Connection conn = dataSource.getConnection();
-         PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = dataSource.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-        stmt.setInt(1, gameId);
-        ResultSet rs = stmt.executeQuery();
-
-        if (rs.next()) {
-            String name = rs.getString("name");
-            String genre = rs.getString("genre"); // example column
-            game = new Game(gameIdStr, name, genre); 
+            stmt.setInt(1, gameId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getString("name");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-
-    } catch (SQLException e) {
-        e.printStackTrace();
+        return "Unknown Game"; // Default fallback
     }
-
-    return game.getName();
-}
-
 
 }

@@ -1,5 +1,7 @@
 package com.csci4370.finalproject.controllers;
 
+import java.util.List;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,10 +11,8 @@ import com.csci4370.finalproject.models.FollowableUser;
 import com.csci4370.finalproject.models.Review;
 import com.csci4370.finalproject.models.User;
 import com.csci4370.finalproject.services.PeopleService;
-// import com.fasterxml.jackson.annotation.JsonCreator.Mode;
-import com.csci4370.finalproject.services.UserService;
 import com.csci4370.finalproject.services.ReviewService;
-import java.util.List;
+import com.csci4370.finalproject.services.UserService;
 
 
 @Controller
