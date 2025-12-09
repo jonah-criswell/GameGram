@@ -1,6 +1,9 @@
 package com.csci4370.finalproject.models;
 
 
+
+
+
 /**
  * Extends the User class to include a following status,
  * indicating whether the current session user follows this user.
@@ -18,6 +21,11 @@ public class FollowableUser extends User {
     private final String lastActiveDate;
 
     /**
+     * Recent reviews from this user.
+     */
+    private Review recentGame;
+
+    /**
      * Constructs a FollowableUser with specified details and follow status.
      *
      * @param userId           the unique identifier of the user
@@ -27,12 +35,14 @@ public class FollowableUser extends User {
      * @param isFollowed       the follow status of the user by the current session
      *                         user
      * @param lastActiveDate   the date and time that this user has last made a post.
+     * @param recentGame      recent reviews from this user
      */
     public FollowableUser(String userId, String firstName, String lastName, String profileImageName,
-            boolean isFollowed, String lastActiveDate) {
+            boolean isFollowed, String lastActiveDate, Review recentGame) {
         super(userId, firstName, lastName, profileImageName);
         this.isFollowed = isFollowed;
         this.lastActiveDate = lastActiveDate;
+        this.recentGame = recentGame;
     }
 
     /**
@@ -69,6 +79,24 @@ public class FollowableUser extends User {
      */
     public String isLastActiveDate() {
         return lastActiveDate;
+    }
+
+    /**
+     * Returns recent reviews from this user.
+     * 
+     * @return recent reviews from this user
+     */
+    public Review getRecentGame() {
+        return recentGame;
+    }
+
+    /**
+     * Sets recent reviews from this user.
+     * 
+     * @param recentGame recent reviews from this user
+     */
+    public void setRecentGame(Review recentGame) {
+        this.recentGame = recentGame;
     }
 
 

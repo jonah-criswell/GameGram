@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.csci4370.finalproject.dto.GameWithPlatforms;
+import com.csci4370.finalproject.models.Game;
 import com.csci4370.finalproject.models.Platform;
 
 @Service
@@ -112,5 +113,30 @@ public class GamesService {
 
         return new ArrayList<>(map.values());
     }
+
+    public String getGameById(int gameId) {
+    Game game = null;
+    String gameIdStr = String.valueOf(gameId);
+    final String sql = "SELECT * FROM games WHERE game_id = ?";
+
+    try (Connection conn = dataSource.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+        stmt.setInt(1, gameId);
+        ResultSet rs = stmt.executeQuery();
+
+        if (rs.next()) {
+            String name = rs.getString("name");
+            String genre = rs.getString("genre"); // example column
+            game = new Game(gameIdStr, name, genre); 
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return game.getName();
+}
+
 
 }

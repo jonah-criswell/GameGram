@@ -43,4 +43,22 @@ public class GameSearchController {
          mv.addObject("reviews", reviews);
          return mv;
       }
+
+      @GetMapping("/{gameId}/reviews/{postId}")
+      public ModelAndView reviewDetails(@PathVariable String gameId,
+                                       @PathVariable String postId) {
+         
+         ModelAndView mv = new ModelAndView("reviews_details_page");
+
+         Review review = reviewService.getReviewByPostId(postId);
+
+         mv.addObject("review", review);
+
+         mv.addObject("gameId", gameId);
+
+         return mv;
+      }
+
+
+
 }

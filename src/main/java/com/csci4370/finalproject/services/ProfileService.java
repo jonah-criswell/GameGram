@@ -21,10 +21,12 @@ import com.csci4370.finalproject.models.User;
 public class ProfileService {
     
      private final DataSource dataSource;
+    private final GamesService gameService;
 
      @Autowired
-     public ProfileService(DataSource dataSource) {
-         this.dataSource = dataSource;
+     public ProfileService(DataSource dataSource, GamesService gameService) {
+        this.dataSource = dataSource;
+        this.gameService = gameService;
      }
 
      public List<Review> getUserReviews(String userID) {
@@ -76,7 +78,7 @@ public class ProfileService {
 
                      reviews.add(new Review(
                          reviewId, content, postDate, user, 
-                         gameId, hoursPlayed, reviewRating, 
+                         gameId, hoursPlayed, reviewRating, gameService.getGameById(gameId), 
                          heartsCount, commentsCount, 
                          isHearted, isBookmarked
                      ));
