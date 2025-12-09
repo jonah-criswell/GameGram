@@ -27,9 +27,7 @@
       <!-- Recent Game Info -->
       {{#recentGame}}
       <p><strong>Most Recent Game:</strong> {{gameName}}</p>
-      <p><strong>Hours Played:</strong> {{hoursPlayed}}</p>
       <p><strong>Rating:</strong> {{starRatingString}}</p>
-      <p><strong>Review:</strong> {{content}}</p>
       {{/recentGame}}
       {{^recentGame}}
       <p>No recent game played.</p>
@@ -60,7 +58,7 @@
 <div class="container" style="margin-top: 40px;">
     <h2>Top 10 Most Popular Games</h2>
 
-    <div class="games-container" style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;">
+    <div class="games-container" style="display: flex; flex-wrap: wrap; gap: 30px; justify-content: center;">
   {{#mostPopGames}}
   <div class="game-card" style="
       border: 1px solid #ccc;
