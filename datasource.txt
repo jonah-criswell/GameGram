@@ -1,0 +1,11 @@
+datasource.txt that describes the source of your data. 
+Link to the data if you used an existing dataset. 
+A description of how you generated data if you created/used a program to generate data.
+
+We retrieved a CSV of video game sales from kaggle. Each row contains a video game, its platform, publisher, sales in multiple regions, and a rank based on its number  of  sales. 
+Out of this we created SQL insert statements to produce 2 tables since the original data split the same game up if it was re-released under different publishers on different platforms. 
+These tables are the games table, which contains individual games without duplication, and the platforms table, which contains the information that differs with different releases of the same game. 
+https://www.kaggle.com/datasets/ulrikthygepedersen/video-games-sales
+
+
+

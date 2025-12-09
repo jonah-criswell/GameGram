@@ -2,7 +2,7 @@
 <html lang="en">
 {{> fragments/html_header}}
 
-<body class="profile-page">
+<body class="home-page">
 
     <div class="logo-wrapper">
         <img src="/css/gg purple logo.png" alt="GameGram Logo">
@@ -23,6 +23,7 @@
             <h3>Recent Reviews</h3>
             <hr>
 
+<<<<<<< HEAD
             <div class="reviews-list">
             {{#reviews}}
                 <div class="review-card">
@@ -53,10 +54,16 @@
                     </div>
                 </div>
             {{/reviews}}
+=======
+            <div>
+                {{#reviews}}
+                    {{> fragments/review_card }}
+                {{/reviews}}
+>>>>>>> origin/main
             
-            {{^reviews}}
-                <p>No reviews posted yet.</p>
-            {{/reviews}}
+                {{^reviews}}
+                    <p>No reviews posted yet.</p>
+                {{/reviews}}
             </div>
         </div>
     </div>
