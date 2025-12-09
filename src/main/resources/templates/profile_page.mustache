@@ -23,43 +23,10 @@
             <h3>Recent Reviews</h3>
             <hr>
 
-<<<<<<< HEAD
-            <div class="reviews-list">
-            {{#reviews}}
-                <div class="review-card">
-                    <div class="review-header">
-                        <span class="game-title">Game ID: {{gameName}}</span>
-                        <span class="review-date">{{postDate}}</span>
-                    </div>
-
-                    <div class="review-stats">
-                        <span class="rating-badge">{{starRatingString}}</span>
-                        <span class="hours-badge">{{hoursPlayed}} hrs</span>
-                    </div>
-                    
-                    <p class="review-content">{{content}}</p>
-
-                    <div class="review-footer">
-                        <span class="icon">
-                            {{#isHearted}}❤️{{/isHearted}}
-                            {{^isHearted}}🤍{{/isHearted}} 
-                            {{heartsCount}}
-                        </span>
-                        
-                        <span class="icon">{{commentsCount}}</span>
-
-                        {{#isBookmarked}}
-                        <span class="icon" title="Bookmarked"></span>
-                        {{/isBookmarked}}
-                    </div>
-                </div>
-            {{/reviews}}
-=======
             <div>
                 {{#reviews}}
                     {{> fragments/review_card }}
                 {{/reviews}}
->>>>>>> origin/main
             
                 {{^reviews}}
                     <p>No reviews posted yet.</p>
