@@ -1,6 +1,7 @@
 package com.csci4370.finalproject.controllers;
 
 import java.util.List;
+import java.sql.SQLException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -28,26 +29,54 @@ public class ProfileController {
     }
 
     @GetMapping("/profile")
-    public ModelAndView webpage(@RequestParam(name = "error", required = false) String error) {
-        ModelAndView mv = new ModelAndView("profile_page");
-        
-        User user = userService.getLoggedInUser();
-        
-        //If user somehow is not logged in
-        if (user == null) {
-            mv.setViewName("redirect:/login");
-            return mv;
-        }
-
-        // Add User Info
-        mv.addObject("firstName", user.getFirstName());
-        mv.addObject("lastName", user.getLastName());
-        mv.addObject("profileImagePath", user.getProfileImagePath()); 
-
-        // Add Reviews
-        List<Review> reviews = profileService.getUserReviews(user.getUserId());
-        mv.addObject("reviews", reviews);
-
+public ModelAndView webpage(
+        @RequestParam(name = "error", required = false) String error,
+        @RequestParam(name = "userId", required = false) String userId) {
+    ModelAndView mv = new ModelAndView("profile_page");
+    
+    User loggedInUser = userService.getLoggedInUser();
+    
+    // If user somehow is not logged in
+    if (loggedInUser == null) {
+        mv.setViewName("redirect:/login");
         return mv;
     }
+
+    // Determine which user's profile to show
+    User profileUser;
+    if (userId != null && !userId.isEmpty()) {
+        // Show another user's profile
+        try {
+            profileUser = userService.getUserById(userId);
+            if (profileUser == null) {
+                mv.addObject("errorMessage", "User not found");
+                profileUser = loggedInUser; // Fallback to logged in user
+            }
+        } catch (SQLException e) {
+            mv.addObject("errorMessage", "Unable to load user profile");
+            profileUser = loggedInUser; // Fallback to logged in user
+            e.printStackTrace();
+        }
+    } else {
+        // Show logged in user's own profile
+        profileUser = loggedInUser;
+    }
+
+    // Add User Info
+    mv.addObject("firstName", profileUser.getFirstName());
+    mv.addObject("lastName", profileUser.getLastName());
+    mv.addObject("profileImagePath", profileUser.getProfileImagePath()); 
+    mv.addObject("isOwnProfile", profileUser.getUserId().equals(loggedInUser.getUserId()));
+
+    // Add Reviews
+    try {
+        List<Review> reviews = profileService.getUserReviews(profileUser.getUserId());
+        mv.addObject("reviews", reviews);
+    } catch (Exception e) {
+        mv.addObject("errorMessage", "Unable to load reviews");
+        e.printStackTrace();
+    }
+
+    return mv;
+}
 }

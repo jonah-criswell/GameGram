@@ -4,15 +4,7 @@ use gamegram;
 CREATE TABLE if not exists games(
    game_id      INTEGER  NOT NULL PRIMARY KEY 
   ,name         VARCHAR(132) NOT NULL
-  ,platform     VARCHAR(4) NOT NULL
-  ,year         NUMERIC(6,1) 
   ,genre        VARCHAR(12) NOT NULL
-  ,publisher    VARCHAR(38) 
-  ,na_sales     NUMERIC(5,2)
-  ,eu_sales     NUMERIC(5,2)
-  ,jp_sales     NUMERIC(5,2)
-  ,other_sales  NUMERIC(5,2)
-  ,global_sales NUMERIC(5,2)
 );
 
 create table if not exists user (
@@ -35,8 +27,6 @@ create table if not exists follows (
     key followedId (followedId),
     constraint follows_ibfk_1 foreign key (followingId) references user (userId),
     constraint follows_ibfk_2 foreign key (followedId) references user (userId)
-<<<<<<< HEAD
-=======
 );
 
 create table if not exists platforms (

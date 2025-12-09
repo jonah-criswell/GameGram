@@ -15,10 +15,11 @@ import org.springframework.web.context.annotation.SessionScope;
 
 import com.csci4370.finalproject.models.Review;
 import com.csci4370.finalproject.models.User;
+import com.csci4370.finalproject.services.GamesService;
 
-// @Service
-// @SessionScope
-// public class ProfileService {
+@Service
+@SessionScope
+public class ProfileService {
     
      private final DataSource dataSource;
     private final GamesService gameService;
