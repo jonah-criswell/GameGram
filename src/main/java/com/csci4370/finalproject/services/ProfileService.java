@@ -1,87 +1,93 @@
 package com.csci4370.finalproject.services;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.SessionScope;
 
+import com.csci4370.finalproject.models.Review;
 import com.csci4370.finalproject.models.User;
 
 // @Service
 // @SessionScope
 // public class ProfileService {
     
-//     private final DataSource dataSource;
+     private final DataSource dataSource;
+    private final GamesService gameService;
 
-//     @Autowired
-//     public UserService(DataSource dataSource) {
-//         this.dataSource = dataSource;
-//         this.passwordEncoder = new BCryptPasswordEncoder();
-//     }
+     @Autowired
+     public ProfileService(DataSource dataSource, GamesService gameService) {
+        this.dataSource = dataSource;
+        this.gameService = gameService;
+     }
 
-//     public List<Post> getUserReviews(String userID) {
-//         final String sql = "SELECT * FROM user u LEFT JOIN reviews r on u.userId = r.review_by WHERE u.userId = ?;";
-//         List<Post> reviews = new ArrayList<>();
-//         try (Connection conn = dataSource.getConnection();
-//                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
-//             pstmt.setString(1, userID);
-//             try (ResultSet rs = pstmt.executeQuery()) {
+     public List<Review> getUserReviews(String userID) {
+         // SQL: Selects review details, user details, and the game name.
+         // formatting the date inside SQL makes Java handling easier.
+         final String sql = "SELECT " +
+                 "r.reviewId, r.content, DATE_FORMAT(r.postDate, '%M %d, %Y') as formattedDate, " +
+                 "r.game_id, r.hoursPlayed, r.reviewRating, r.heartsCount, r.commentsCount, " +
+                 "r.isHearted, r.isBookmarked, " +
+                 "u.userId, u.firstName, u.lastName, " +
+                 "g.name as gameName " +
+                 "FROM review r " +
+                 "JOIN user u ON r.userId = u.userId " +
+                 "JOIN games g ON r.game_id = g.game_id " +
+                 "WHERE u.userId = ? " +
+                 "ORDER BY r.postDate DESC;";
+         
+         List<Review> reviews = new ArrayList<>();
+         
+         try (Connection conn = dataSource.getConnection();
+              PreparedStatement pstmt = conn.prepareStatement(sql)) {
+              
+             pstmt.setString(1, userID);
+             
+             try (ResultSet rs = pstmt.executeQuery()) {
 
-//                 while (rs.next()) {
+                 while (rs.next()) {
+                     String userId = rs.getString("userId");
+                     String firstName = rs.getString("firstName");
+                     String lastName = rs.getString("lastName");
+                
+                     User user = new User(userId, firstName, lastName);
 
-//                     String userId = rs.getString("userId");
-//                     String username = rs.getString("username");
-//                     String firstName = rs.getString("firstName");
-//                     String lastName = rs.getString("lastName");
-//                     //String profileImagePath = rs.getString("profileImagePath");
+                     // Review Info
+                     String reviewId = String.valueOf(rs.getInt("reviewId"));
+                     String content = rs.getString("content");
+                     String postDate = rs.getString("formattedDate");
+                     
+                     int gameId = rs.getInt("game_id"); 
 
-//                     String postId = rs.getString("postId");
-//                     String content = rs.getString("content");
-//                     String postDate = rs.getString("formattedDate");
-//                     //User user = new User(userId, firstName, lastName, profileImagePath);
-//                     User user = new User(userId, firstName, lastName);
-//                     // For more complicated post:
-//                     int heartsCount = rs.getInt("heartsCount");
-//                     int commentsCount = rs.getInt("commentsCount");
-//                     //boolean isHearted = rs.getBoolean("isHearted");
-//                     boolean isHeartedBoolean;
-//                     final String checkHeartSql = "SELECT * FROM post_hearts WHERE userId = ? AND postId = ?;";
-//                     try (PreparedStatement checkHeartStmt = conn.prepareStatement(checkHeartSql)) {
-//                         checkHeartStmt.setString(1, userID);
-//                         checkHeartStmt.setString(2, postId);
-//                         try (ResultSet heartRs = checkHeartStmt.executeQuery()) {
-//                             isHeartedBoolean = heartRs.next();
-//                         }
-//                     }
-//                     //boolean isBookmarked = rs.getBoolean("isBookmarked");
-//                     boolean isBookmarkedBoolean;
-//                     final String checkBookmarkSql = "SELECT * FROM post_bookmarks WHERE userId = ? AND postId = ?;";
-//                     try (PreparedStatement checkBookmarkStmt = conn.prepareStatement(checkBookmarkSql)) {
-//                         checkBookmarkStmt.setString(1, userID);
-//                         checkBookmarkStmt.setString(2, postId);
-//                         try (ResultSet bookmarkRs = checkBookmarkStmt.executeQuery()) {
-//                             isBookmarkedBoolean = bookmarkRs.next();
-//                         }
-//                     }
-//                     reviews.add(new Review(postId, content, postDate, user, heartsCount, commentsCount, isHeartedBoolean, isBookmarkedBoolean));
-//                    // posts.add(new BasicPost(postId, content, postDate, user)); //TODO: make tables and calculate heartsCount, commentsCount, isHearted, isBookmarked
-//                 }
-//             }
-//         } catch (Exception e) {
-//             e.printStackTrace();
-//         }
+                     int hoursPlayed = rs.getInt("hoursPlayed");
+                     int reviewRating = rs.getInt("reviewRating");
+                     int heartsCount = rs.getInt("heartsCount");
+                     int commentsCount = rs.getInt("commentsCount");
+                     
+                     // Bool fields
+                     boolean isHearted = rs.getBoolean("isHearted");
+                     boolean isBookmarked = rs.getBoolean("isBookmarked");
 
-    //     return reviews;
-    // }
+                     reviews.add(new Review(
+                         reviewId, content, postDate, user, 
+                         gameId, hoursPlayed, reviewRating, gameService.getGameById(gameId), 
+                         heartsCount, commentsCount, 
+                         isHearted, isBookmarked
+                     ));
+                 }
+             }
+         } catch (SQLException e) {
+             e.printStackTrace();
+         }
 
-
-
-//}
+         return reviews;
+     }
+}

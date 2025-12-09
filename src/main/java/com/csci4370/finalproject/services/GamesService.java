@@ -15,56 +15,128 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.csci4370.finalproject.dto.GameWithPlatforms;
+import com.csci4370.finalproject.models.Game;
 import com.csci4370.finalproject.models.Platform;
 
 @Service
 public class GamesService {
 
-   private final DataSource dataSource;
+    private final DataSource dataSource;
 
-   @Autowired
-   public GamesService(DataSource dataSource) {
-      this.dataSource = dataSource;
-   }
+    @Autowired
+    public GamesService(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
-   public List<GameWithPlatforms> searchGameByTitle(String name) {
-    Map<String, GameWithPlatforms> map = new HashMap<>();
+    public List<GameWithPlatforms> searchGameByTitle(String name) {
+        Map<String, GameWithPlatforms> map = new HashMap<>();
 
-    final String sql = """
-        SELECT g.game_id, g.name, g.genre, p.platform, p.year, p.publisher, p.na_sales, p.eu_sales, p.jp_sales, p.other_sales, p.global_sales
-        FROM games g
-        JOIN platforms p ON p.game_id = g.game_id
-        WHERE g.name LIKE ?
-    """;
+        final String sql = """
+                    SELECT g.game_id, g.name, g.genre, p.platform, p.year, p.publisher, p.na_sales, p.eu_sales, p.jp_sales, p.other_sales, p.global_sales
+                    FROM games g
+                    JOIN platforms p ON p.game_id = g.game_id
+                    WHERE g.name LIKE ?
+                """;
 
-    try (Connection conn = dataSource.getConnection();
-         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-        pstmt.setString(1, "%" + name + "%");
+            pstmt.setString(1, "%" + name + "%");
 
-        try (ResultSet rs = pstmt.executeQuery()) {
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    String id = rs.getString("game_id");
+
+                    map.putIfAbsent(id,
+                            new GameWithPlatforms(
+                                    id,
+                                    rs.getString("name"),
+                                    rs.getString("genre"),
+                                    new ArrayList<>()));
+
+                    Platform platform = new Platform(
+                            rs.getString("platform"), rs.getString("publisher"), rs.getInt("year"),
+                            rs.getDouble("na_sales"), rs.getDouble("eu_sales"), rs.getDouble("jp_sales"),
+                            rs.getDouble("other_sales"), rs.getDouble("global_sales"));
+                    map.get(id).getPlatforms().add(platform);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return new ArrayList<>(map.values());
+
+    }
+
+    public List<GameWithPlatforms> getMostPopularGlobal() {
+        Map<String, GameWithPlatforms> map = new HashMap<>();
+
+        final String sql = """
+                    SELECT g.game_id, g.name, g.genre, p.platform, p.year, p.publisher,
+                           p.na_sales, p.eu_sales, p.jp_sales, p.other_sales, p.global_sales
+                    FROM games g
+                    JOIN platforms p ON g.game_id = p.game_id
+                    ORDER BY p.global_sales DESC
+                    LIMIT 10
+                """;
+
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql);
+                ResultSet rs = pstmt.executeQuery()) {
+
             while (rs.next()) {
                 String id = rs.getString("game_id");
 
-                map.putIfAbsent(id,
-                    new GameWithPlatforms(
+                map.putIfAbsent(id, new GameWithPlatforms(
                         id,
                         rs.getString("name"),
                         rs.getString("genre"),
-                        new ArrayList<>()
-                    )
-                );
+                        new ArrayList<>()));
 
                 Platform platform = new Platform(
-                    rs.getString("platform"), rs.getString("publisher"), rs.getInt("year"), rs.getDouble("na_sales"), rs.getDouble("eu_sales"), rs.getDouble("jp_sales"), rs.getDouble("other_sales"), rs.getDouble("global_sales")
-                );
+                        rs.getString("platform"),
+                        rs.getString("publisher"),
+                        rs.getInt("year"),
+                        rs.getDouble("na_sales"),
+                        rs.getDouble("eu_sales"),
+                        rs.getDouble("jp_sales"),
+                        rs.getDouble("other_sales"),
+                        rs.getDouble("global_sales"));
+
                 map.get(id).getPlatforms().add(platform);
             }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+
+        return new ArrayList<>(map.values());
+    }
+
+    public String getGameById(int gameId) {
+    Game game = null;
+    String gameIdStr = String.valueOf(gameId);
+    final String sql = "SELECT * FROM games WHERE game_id = ?";
+
+    try (Connection conn = dataSource.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+        stmt.setInt(1, gameId);
+        ResultSet rs = stmt.executeQuery();
+
+        if (rs.next()) {
+            String name = rs.getString("name");
+            String genre = rs.getString("genre"); // example column
+            game = new Game(gameIdStr, name, genre); 
+        }
+
     } catch (SQLException e) {
         e.printStackTrace();
     }
 
-    return new ArrayList<>(map.values());
+    return game.getName();
 }
+
+
 }

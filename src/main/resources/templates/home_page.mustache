@@ -1,21 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
 
-
 {{>fragments/html_header}}
-
 
 <body class="home-page">
 
-
     <div class="logo-wrapper">
-    <img src="/css/gg purple logo.png" alt="GameGram Logo">
+        <img src="/css/gg purple logo.png" alt="GameGram Logo">
         <h1 class="brand-title">GameGram</h1>
         <img src="/css/gg purple logo.png" alt="GameGram Logo">
     </div>
 
-{{>fragments/navbar}}
-<!-- Top Games Section (sort by global sales)-->
+    {{>fragments/navbar}}
+
+    <h2 style="text-align: center; margin-bottom: 30px;">All Users</h2>
+
+
+    <div class="friends-container" style="display: flex; flex-wrap: wrap; gap: 20px;">
+  {{#users}}
+  <div class="friend-card" style="border: 1px solid #ccc; padding: 10px; width: 200px; flex: 0 0 auto; text-align: center;">
+      <!-- User info -->
+      <img src="{{profileImagePath}}" alt="User avatar" style="width: 80px; height: 80px; border-radius: 50%;">
+      <h3>{{firstName}} {{lastName}}</h3>
+      <div class="last-active">Last active: {{lastActiveDate}}</div>
+
+      <!-- Recent Game Info -->
+      {{#recentGame}}
+      <p><strong>Most Recent Game:</strong> {{gameName}}</p>
+      <p><strong>Rating:</strong> {{starRatingString}}</p>
+      {{/recentGame}}
+      {{^recentGame}}
+      <p>No recent game played.</p>
+      {{/recentGame}}
+
+      <!-- Follow / Unfollow Form -->
+      <form action="/follow" method="post" style="margin-top: 10px;">
+    <input type="hidden" name="followedId" value="{{userId}}">
+    <input type="hidden" name="isFollowed" value="{{isFollowed}}">
+    <button type="submit" style="
+        padding: 8px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        color: white;
+        font-weight: bold;
+        background-color: {{#isFollowed}}#ff4d4d{{/isFollowed}}{{^isFollowed}}#4CAF50{{/isFollowed}};
+    ">
+        {{#isFollowed}}Unfollow{{/isFollowed}}
+        {{^isFollowed}}Follow{{/isFollowed}}
+    </button>
+</form>
+
+  </div>
+  {{/users}}
+</div>
+
+<div class="container" style="margin-top: 40px;">
+    <h2>Top 10 Most Popular Games</h2>
+
+    <div class="games-container" style="display: flex; flex-wrap: wrap; gap: 30px; justify-content: center;">
+  {{#mostPopGames}}
+  <div class="game-card" style="
+      border: 1px solid #ccc;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      width: 250px;
+      text-align: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+  ">
+      <h3 style="margin-bottom: 10px;">{{name}}</h3>
+      <p><strong>Genre:</strong> {{genre}}</p>
+      <p><strong>Platforms:</strong></p>
+      <ul style="list-style: none; padding: 0; margin: 0 0 15px 0;">
+          {{#platforms}}
+          <li>{{platformName}} - {{publisher}} ({{year}})</li>
+          {{/platforms}}
+      </ul>
+      <a href="/games/{{gameId}}" class="button" style="
+          display: inline-block;
+          padding: 8px 15px;
+          border-radius: 5px;
+          background-color: #4CAF50;
+          color: white;
+          text-decoration: none;
+          font-weight: bold;
+      ">View Game</a>
+  </div>
+  {{/mostPopGames}}
+
+  {{^mostPopGames}}
+  <p class="no-games" style="text-align: center; width: 100%;">No popular games found.</p>
+  {{/mostPopGames}}
+</div>
+
+
 
 
 

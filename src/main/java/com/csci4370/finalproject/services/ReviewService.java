@@ -22,6 +22,8 @@ import org.springframework.web.context.annotation.SessionScope;
 //import uga.menik.csx370.models.User;
 import com.csci4370.finalproject.models.User;
 import com.csci4370.finalproject.models.Review;
+import com.csci4370.finalproject.services.UserService;
+import com.csci4370.finalproject.services.GamesService;
 
 
 @Service
@@ -32,6 +34,8 @@ public class ReviewService {
     private final DataSource dataSource;
     // userService provides user-related operations within this session.
     private final UserService userService;
+
+    private final GamesService gamesService;
     // passwordEncoder is used for password security.
     private final BCryptPasswordEncoder passwordEncoder;
     // This holds 
@@ -45,31 +49,159 @@ public class ReviewService {
     public ReviewService(DataSource dataSource, UserService userService) {
         this.dataSource = dataSource;
         this.userService = userService;
+        this.gamesService = new GamesService(dataSource);
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
-    /**
-     * Registers a new user with the given details.
-     * Returns true if registration is successful. If the username already exists,
-     * a SQLException is thrown due to the unique constraint violation, which should
-     * be handled by the caller.
-     */
-    public boolean makeReview(int hoursPlayed, String content, int reviewRating, User user)
-            throws SQLException {
+    public boolean makeReview(int hoursPlayed, int game_id, String content, int reviewRating, User user, String gameName) {
         // Note the ? marks in the SQL statement. They are placeholders like mentioned above.
-        final String postSql = "insert into review (hoursPlayed, content, reviewRating, reviewDate, userId) values (?, ?, ?, now(), ?)";
+        final String postSql = "insert into review (game_id, hoursPlayed, content, reviewRating, postDate, userId) values (?, ?, ?, ?, now(), ?)";
         try (Connection conn = dataSource.getConnection();
-                PreparedStatement postStmt = conn.prepareStatement(postSql)) {
-            // Following lines replace the placeholders 1-4 with values.
-            postStmt.setInt(1, hoursPlayed);
-            postStmt.setString(2, content);
-            postStmt.setInt(3, reviewRating);
+            PreparedStatement postStmt = conn.prepareStatement(postSql)) {
+            postStmt.setInt(1, game_id);
+            postStmt.setInt(2, hoursPlayed);
+            postStmt.setString(3, content);
+            postStmt.setInt(4, reviewRating);
             postStmt.setString(5, user.getUserId());
-            // Execute the statement and check if rows are affected.
             int rowsAffected = postStmt.executeUpdate();
             return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
+
+    public List<Review> getReviewsByGameId(String gameId) {
+        List<Review> reviews = new ArrayList<>();
+        final String reviewSql = "SELECT * FROM review WHERE game_id = ?";
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement reviewStmt = conn.prepareStatement(reviewSql)) {
+            reviewStmt.setString(1, gameId);
+            ResultSet rs = reviewStmt.executeQuery();
+            while (rs.next()) {
+                String reviewId = rs.getString("reviewId");
+                int hoursPlayed = rs.getInt("hoursPlayed");
+                String content = rs.getString("content");
+                int reviewRating = rs.getInt("reviewRating");
+                String reviewDate = rs.getString("postDate");
+                String userId = rs.getString("userId");
+                int gameIdInt = rs.getInt("game_id"); // from your review query
+                String gameName = gamesService.getGameById(gameIdInt); // returns game name
+
+                Review review = new Review(
+                    reviewId,
+                    content,
+                    reviewDate,
+                    userService.getUserById(userId),
+                    gameIdInt,
+                    hoursPlayed,
+                    reviewRating,
+                    gameName,  // <- string for the constructor
+                    0, // heartsCount
+                    0, // commentsCount
+                    false, // isHearted
+                    false  // isBookmarked
+                );
+
+                //Review review = new Review(reviewId, content, reviewDate, userService.getUserById(userId), Integer.parseInt(gameId), hoursPlayed, reviewRating, GamesService.getGameById(gameId) 0, 0, false, false);
+                reviews.add(review);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return reviews;
+    }
+
+    public Review getRecentReviewsFromFollowedUsers(String userId) {
+    Review review = null;
+    final String reviewSql = """
+        SELECT r.*, g.name as gameName
+        FROM review r
+        JOIN games g ON r.game_id = g.game_id
+        WHERE r.userId = ?
+        ORDER BY r.postDate DESC
+        LIMIT 1
+    """;
+
+    try (Connection conn = dataSource.getConnection();
+         PreparedStatement reviewStmt = conn.prepareStatement(reviewSql)) {
+
+        reviewStmt.setString(1, userId);
+        try (ResultSet rs = reviewStmt.executeQuery()) {
+            if (rs.next()) { // <-- check if there’s a row before reading
+                String reviewId = rs.getString("reviewId");
+                int hoursPlayed = rs.getInt("hoursPlayed");
+                String content = rs.getString("content");
+                int reviewRating = rs.getInt("reviewRating");
+                String reviewDate = rs.getString("postDate");
+                int gameId = rs.getInt("game_id");
+                String reviewUserId = rs.getString("userId");
+                //int gameIdInt = gameId.parseInt(); // from your review query
+                String gameName = gamesService.getGameById(gameId); // returns game name
+
+                review = new Review(
+                    reviewId,
+                    content,
+                    reviewDate,
+                    userService.getUserById(userId),
+                    gameId,
+                    hoursPlayed,
+                    reviewRating,
+                    gameName,  // <- string for the constructor
+                    0, // heartsCount
+                    0, // commentsCount
+                    false, // isHearted
+                    false  // isBookmarked
+                );
+
+            }
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return review; // will be null if no recent review exists
+}
+
+    public Review getReviewByPostId(String reviewId){
+        Review review = null;
+        final String reviewSql = "SELECT * FROM review WHERE reviewId = ?";
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement reviewStmt = conn.prepareStatement(reviewSql)) {
+            reviewStmt.setString(1, reviewId);
+            ResultSet rs = reviewStmt.executeQuery();
+            if (rs.next()) {
+                int hoursPlayed = rs.getInt("hoursPlayed");
+                String content = rs.getString("content");
+                int reviewRating = rs.getInt("reviewRating");
+                String reviewDate = rs.getString("postDate");
+                String userId = rs.getString("userId");
+                int gameIdInt = rs.getInt("game_id"); // from your review query
+                String gameName = gamesService.getGameById(gameIdInt); // returns game name
+
+                review = new Review(
+                    reviewId,
+                    content,
+                    reviewDate,
+                    userService.getUserById(userId),
+                    gameIdInt,
+                    hoursPlayed,
+                    reviewRating,
+                    gameName,  // <- string for the constructor
+                    0, // heartsCount
+                    0, // commentsCount
+                    false, // isHearted
+                    false  // isBookmarked
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return review;
+    }
+
+
 
     // Search posts containing all hashtags in the list, seperated by spaces.
     //TODO: prevent empty searches, fix things like #hashtags being returned for #hashtag. The search should not be returning partial matches.
@@ -231,37 +363,37 @@ public class ReviewService {
 
 
 
-//     public boolean addComment(String postId, User user,  String comment) throws SQLException {
-//         /**
-//          * SQL COMMAND TO CREATE TABLE FOR COMMENTS
-//          * create table if not exists post_comments (
-//          *  commentId int auto_increment,
-//          *  postId int not null,
-//          *  userId int not null,
-//          *  commentText varchar(255) not null,
-//          *  commentDate datetime not null,
-//          *  primary key (commentId),
-//          *  foreign key (userId) references user(userId),
-//          *  foreign key (postId) references post(postId)
-//          *  );
-//          */
+    public boolean addComment(String postId, User user,  String comment) throws SQLException {
+        /**
+         * SQL COMMAND TO CREATE TABLE FOR COMMENTS
+         * create table if not exists post_comments (
+         *  commentId int auto_increment,
+         *  postId int not null,
+         *  userId int not null,
+         *  commentText varchar(255) not null,
+         *  commentDate datetime not null,
+         *  primary key (commentId),
+         *  foreign key (userId) references user(userId),
+         *  foreign key (postId) references post(postId)
+         *  );
+         */
 
-//         final String insertCommentSql = "insert into post_comments (postId, userId, commentText, commentDate) values (?, ?, ?, now())";
-//         final String updateCommentsSql = "update full_post set CommentsCount = CommentsCount + 1 where postId = ?";
-//         try (Connection conn = dataSource.getConnection();
-//                 PreparedStatement updateCommentsStmt = conn.prepareStatement(updateCommentsSql))
-//     {            updateCommentsStmt.setString(1, postId); 
-//             int rowsAffectedCountUpdate = updateCommentsStmt.executeUpdate();
-//     }
-//         try (Connection conn = dataSource.getConnection();
-//                 PreparedStatement insertCommentStmt = conn.prepareStatement(insertCommentSql)) {
-//             insertCommentStmt.setString(1, postId);
-//             insertCommentStmt.setString(2, user.getUserId());
-//             insertCommentStmt.setString(3, comment);
-//             int rowsAffected = insertCommentStmt.executeUpdate();
-//             return rowsAffected > 0;
-//         }
-//     }
+        final String insertCommentSql = "insert into post_comments (postId, userId, commentText, commentDate) values (?, ?, ?, now())";
+        final String updateCommentsSql = "update full_post set CommentsCount = CommentsCount + 1 where postId = ?";
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement updateCommentsStmt = conn.prepareStatement(updateCommentsSql))
+    {            updateCommentsStmt.setString(1, postId); 
+            int rowsAffectedCountUpdate = updateCommentsStmt.executeUpdate();
+    }
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement insertCommentStmt = conn.prepareStatement(insertCommentSql)) {
+            insertCommentStmt.setString(1, postId);
+            insertCommentStmt.setString(2, user.getUserId());
+            insertCommentStmt.setString(3, comment);
+            int rowsAffected = insertCommentStmt.executeUpdate();
+            return rowsAffected > 0;
+        }
+    }
 
 
 //     public boolean addOrRemoveBookmark(String postId, User user, boolean isAdd) throws SQLException {

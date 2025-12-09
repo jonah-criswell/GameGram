@@ -10,6 +10,8 @@ public class Review extends BasicPost {
 
     private final int reviewRating;
 
+    private final String gameName;
+
     private final int heartsCount;
 
     private final int commentsCount;
@@ -17,6 +19,9 @@ public class Review extends BasicPost {
     private final boolean isHearted;
 
     private final boolean isBookmarked;
+        
+    private String starRatingString;
+
 
     /**
      * Constructs a Review with specified details.
@@ -29,18 +34,25 @@ public class Review extends BasicPost {
      * @param hoursPlayed the number of hours played by the reviewer
      * @param reviewText  the text content of the review
      * @param reviewRating the rating given in the review
+     * @param heartsCount the number of hearts (likes) the review has received
+     * @param commentsCount the number of comments the review has received
+     * @param isHearted   whether the review is hearted by the current user
+     * @param isBookmarked whether the review is bookmarked by the current user
+     * @param gameName    the name of the game being reviewed
      * @param reviewDate  the date the review was posted
      */
     public Review(String postId, String content, String postDate, User user, int game_id, int hoursPlayed,
-            int reviewRating, int heartsCount, int commentsCount, boolean isHearted, boolean isBookmarked) {
+            int reviewRating, String gameName, int heartsCount, int commentsCount, boolean isHearted, boolean isBookmarked) {
         super(postId, content, postDate, user);
         this.game_id = game_id;
         this.hoursPlayed = hoursPlayed;
         this.reviewRating = reviewRating;
+        this.gameName = gameName;
         this.heartsCount = heartsCount;
         this.commentsCount = commentsCount;
         this.isHearted = isHearted;
         this.isBookmarked = isBookmarked;
+        this.starRatingString = "⭐".repeat(reviewRating / 2);
     }
 
     /**
@@ -80,6 +92,13 @@ public class Review extends BasicPost {
     }
 
     /**
+     * Returns the name of the game being reviewed.
+     */
+    public String getGameName() {
+        return gameName;
+    }
+
+    /**
      * Returns the number of comments the post has received.
      *
      * @return the number of comments
@@ -105,6 +124,14 @@ public class Review extends BasicPost {
     public boolean isBookmarked() {
         return isBookmarked;
     }
+
+    /**
+     * Gets the rating turned into stars for display.
+     */
+     public String getStarRatingString() {
+        return starRatingString;
+    }
+
 
 }
 
