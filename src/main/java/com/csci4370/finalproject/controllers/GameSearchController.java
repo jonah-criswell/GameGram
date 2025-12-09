@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.csci4370.finalproject.services.GamesService;
-import com.csci4370.finalproject.services.ReviewService;
 import com.csci4370.finalproject.dto.GameWithPlatforms;
 import com.csci4370.finalproject.models.Review;
+import com.csci4370.finalproject.services.GamesService;
+import com.csci4370.finalproject.services.ReviewService;
 
 @Controller
 @RequestMapping("/games")
@@ -41,6 +41,11 @@ public class GameSearchController {
          ModelAndView mv = new ModelAndView("game_details_page");
          List<Review> reviews = reviewService.getReviewsByGameId(gameId);
          mv.addObject("reviews", reviews);
+
+         // Look up the human-friendly game name for display
+         String gameName = gamesService.getGameById(Integer.parseInt(gameId));
+         mv.addObject("gameName", gameName);
+
          return mv;
       }
 
