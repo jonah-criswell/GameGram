@@ -134,4 +134,54 @@ public class PeopleService {
         return allOtherUsers;
     }
 
+    /**
+     * Retrieves ONLY the users that the current user is following.
+     * This is lightweight because the Controller handles fetching the full Game Review later.
+     */
+    public List<FollowableUser> getFollowedUsers(String currentUserId) {
+        List<FollowableUser> followedUsers = new ArrayList<>();
+
+        // SQL: 
+        // 1. Get User Details
+        // 2. JOIN 'follows' to filter only friends
+        // 3. LEFT JOIN 'review' to calculate the MAX(postDate) for the constructor
+        String sql = "SELECT u.userId, u.firstName, u.lastName, " +
+                     "DATE_FORMAT(MAX(r.postDate), '%b %d, %Y') as lastActiveDate " +
+                     "FROM user u " +
+                     "JOIN follows f ON u.userId = f.followedId " + // Only get people I follow
+                     "LEFT JOIN review r ON u.userId = r.userId " + // Join reviews to find the latest date
+                     "WHERE f.followingId = ? " +
+                     "GROUP BY u.userId, u.firstName, u.lastName";
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, currentUserId);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    String userId = rs.getString("userId");
+                    String firstName = rs.getString("firstName");
+                    String lastName = rs.getString("lastName");
+                    String lastActiveDate = rs.getString("lastActiveDate");
+
+                    // Since they are in the 'follows' table, isFollowed is always true
+                    boolean isFollow = true;
+
+                    if (lastActiveDate == null) {
+                        lastActiveDate = "No recent activity";
+                    }
+
+                    // Create the user object.
+                    // Note: We do NOT set .setRecentGame() here. 
+                    // Your FriendsPageController handles that in the loop.
+                    followedUsers.add(new FollowableUser(userId, firstName, lastName, isFollow, lastActiveDate));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return followedUsers;
+    }
 }
