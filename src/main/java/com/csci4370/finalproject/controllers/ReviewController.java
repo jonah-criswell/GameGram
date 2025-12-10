@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.csci4370.finalproject.services.GamesService;
+//import com.csci4370.finalproject.services.GamesService;
 import com.csci4370.finalproject.services.ReviewService;
 import com.csci4370.finalproject.services.UserService;
 
@@ -21,17 +21,20 @@ import com.csci4370.finalproject.services.UserService;
 public class ReviewController {
    private final ReviewService reviewService;
    private final UserService userService;
-   private final GamesService gamesService;
+   //private final GamesService gamesService;
 
    @Autowired
-   public ReviewController(ReviewService reviewService, UserService userService, GamesService gamesService) {
+   public ReviewController(ReviewService reviewService, UserService userService){ //, GamesService gamesService) {
       this.reviewService = reviewService;
       this.userService = userService;
-      this.gamesService = gamesService;
+      //this.gamesService = gamesService;
    }
 
+   
    @GetMapping
    public ModelAndView showReviewPage(@PathVariable String gameId) {
+      
+      // Display the make review page
       ModelAndView mv = new ModelAndView("make_review_page");
       mv.addObject("gameId", gameId);
       return mv;
@@ -39,6 +42,8 @@ public class ReviewController {
 
    @PostMapping
    public String makeReview(@PathVariable String gameId, @RequestParam("rating") int rating, @RequestParam("hours_played") int hoursPlayed, @RequestParam("content") String reviewText) {
+
+      // Handle the form submission to create a new review
       reviewService.makeReview(hoursPlayed, Integer.parseInt(gameId), reviewText, rating, userService.getLoggedInUser());
       
       return "redirect:/games/" + gameId;
@@ -48,6 +53,8 @@ public class ReviewController {
     public String postComment(@PathVariable String gameId,
                               @PathVariable("postId") String postId,
                               @RequestParam(name = "comment") String comment) {
+        
+        // Handle posting a comment on a review
         System.out.println("The user is attempting add a comment:");
         System.out.println("\tpostId: " + postId);
         System.out.println("\tcomment: " + comment);
@@ -66,6 +73,8 @@ public class ReviewController {
    public String toggleHeart(@PathVariable String gameId,
                             @PathVariable String postId,
                             @RequestParam(value = "returnTo", required = false) String returnTo) {
+
+       // Handle toggling the heart (like) status on a review
        try {
            boolean currentlyHearted = reviewService.hasUserHearted(postId, userService.getLoggedInUser());
            reviewService.addOrRemoveHeart(postId, userService.getLoggedInUser(), !currentlyHearted);

@@ -38,11 +38,12 @@ public class GameSearchController {
 
       @GetMapping("/{gameId}")
       public ModelAndView gameDetails(@PathVariable String gameId) {
+
+         // Retrieve game details and reviews for the specified gameId
          ModelAndView mv = new ModelAndView("game_details_page");
          List<Review> reviews = reviewService.getReviewsByGameId(gameId);
          mv.addObject("reviews", reviews);
 
-         // Look up the human-friendly game name for display
          String gameName = gamesService.getGameById(Integer.parseInt(gameId));
          mv.addObject("gameName", gameName);
 
@@ -52,15 +53,12 @@ public class GameSearchController {
       @GetMapping("/{gameId}/reviews/{postId}")
       public ModelAndView reviewDetails(@PathVariable String gameId,
                                        @PathVariable String postId) {
-         
+
+         // Retrieve review details and comments for the specified postId
          ModelAndView mv = new ModelAndView("reviews_details_page");
-
          Review review = reviewService.getReviewByPostId(postId);
-
          mv.addObject("review", review);
-
          mv.addObject("gameId", gameId);
-
          mv.addObject("comments", reviewService.getCommentsByReviewId(postId));
 
          return mv;

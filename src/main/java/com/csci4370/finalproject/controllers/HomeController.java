@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.PathVariable;
+//import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.csci4370.finalproject.services.UserService;
@@ -20,7 +20,7 @@ import com.csci4370.finalproject.services.PeopleService;
 import com.csci4370.finalproject.models.User;
 import com.csci4370.finalproject.dto.GameWithPlatforms;
 import com.csci4370.finalproject.models.FollowableUser;
-import com.csci4370.finalproject.models.Game;
+//import com.csci4370.finalproject.models.Game;
 import com.csci4370.finalproject.services.FollowService;
 import com.csci4370.finalproject.models.Review;
 
