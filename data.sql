@@ -28089,3 +28089,32 @@ INSERT INTO platforms(platform,year,publisher,na_sales,eu_sales,jp_sales,other_s
 INSERT INTO platforms(platform,year,publisher,na_sales,eu_sales,jp_sales,other_sales,global_sales,game_id) VALUES ('DS',2008.0,'Destineer',0.01,0.0,0.0,0.0,0.01,16595);
 INSERT INTO platforms(platform,year,publisher,na_sales,eu_sales,jp_sales,other_sales,global_sales,game_id) VALUES ('GBA',2002.0,'Kemco',0.01,0.0,0.0,0.0,0.01,16596);
 INSERT INTO platforms(platform,year,publisher,na_sales,eu_sales,jp_sales,other_sales,global_sales,game_id) VALUES ('DS',2010.0,'7G//AMES',0.0,0.01,0.0,0.0,0.01,16599);
+
+
+INSERT INTO user(userId, username, password, firstName, lastName) VALUES (1, 'aidanmurray', '1234', 'Aidan', 'Murray');
+INSERT INTO user(userId, username, password, firstName, lastName) VALUES (2, 'joeyvos', '1234', 'Joey', 'Vos');
+INSERT INTO user(userId, username, password, firstName, lastName) VALUES (3, 'chrismcintosh', '1234', 'Chris', 'McIntosh');
+INSERT INTO user(userId, username, password, firstName, lastName) VALUES (4, 'masongindlesperger', '1234', 'Mason', 'Gindlesperger');
+INSERT INTO user(userId, username, password, firstName, lastName) VALUES (5, 'jonahcriswell', '1234', 'Jonah', 'Criswell');
+INSERT INTO user(userId, username, password, firstName, lastName) VALUES (6, 'samimenik', 'samimenik123', 'Sami', 'Menik');
+
+INSERT INTO follows(followingId, followedId) VALUES (1, 2);
+INSERT INTO follows(followingId, followedId) VALUES (1, 3);
+INSERT INTO follows(followingId, followedId) VALUES (2, 1);
+INSERT INTO follows(followingId, followedId) VALUES (2, 4);
+INSERT INTO follows(followingId, followedId) VALUES (3, 5);
+INSERT INTO follows(followingId, followedId) VALUES (4, 1);
+INSERT INTO follows(followingId, followedId) VALUES (1, 4);
+INSERT INTO follows(followingId, followedId) VALUES (1, 5);
+INSERT INTO follows(followingId, followedId) VALUES (1, 6);
+INSERT INTO follows(followingId, followedId) VALUES (2, 6);
+INSERT INTO follows(followingId, followedId) VALUES (3, 6);
+INSERT INTO follows(followingId, followedId) VALUES (4, 6);
+INSERT INTO follows(followingId, followedId) VALUES (5, 6);
+
+INSERT INTO review(reviewId, userId, game_id, hoursPlayed, reviewRating, content, postDate, heartsCount, commentsCount, isHearted, isBookmarked) VALUES (1, 1, 1, 10000, 10, "This was my favorie game growing up and I love returning back to the game!", NOW(), 0,0, false, false);
+INSERT INTO review(reviewId, userId, game_id, hoursPlayed, reviewRating, content, postDate, heartsCount, commentsCount, isHearted, isBookmarked) VALUES (2, 1, 73, 100, 1, "Eh I got bored of this game really quickly", NOW(), 0,0, false, false);
+INSERT INTO review(reviewId, userId, game_id, hoursPlayed, reviewRating, content, postDate, heartsCount, commentsCount, isHearted, isBookmarked) VALUES (3, 1, 5482, 50, 3, "This game is cheese and i rage quit after Gordan Hayward missed a buzzer beater on John Wall.", NOW(), 0,0, false, false);
+INSERT INTO review(reviewId, userId, game_id, hoursPlayed, reviewRating, content, postDate, heartsCount, commentsCount, isHearted, isBookmarked) VALUES (4, 2, 7362, 50, 10, "BEST. GAME EVER!!!!!", NOW(), 0,0, false, false);
+INSERT INTO review(reviewId, userId, game_id, hoursPlayed, reviewRating, content, postDate, heartsCount, commentsCount, isHearted, isBookmarked) VALUES (5, 6, 1268, 5000, 10, "Played it alllllll the time. Couldn't take a break from it. Ever.", NOW(), 0,0, false, false);
+
