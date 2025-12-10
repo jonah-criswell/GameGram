@@ -1,5 +1,16 @@
 perf.txt file that lists the statements you used to create indexes:
 
+CREATE INDEX idx_game_name ON games (name);
+
 This file should also include the queries that were affected by the indexes.
+		"""
+                    SELECT g.game_id, g.name, g.genre, p.platform, p.year, p.publisher, p.na_sales, p.eu_sales, p.jp_sales, p.other_sales, p.global_sales
+                    FROM games g
+                    JOIN platforms p ON p.game_id = g.game_id
+                    WHERE g.name LIKE ?
+                """
 
 Under each query provide time consumption before and after adding the index. This should be done after populating the database with data.
+
+Before: 14ms (average)
+After: 12ms (average)

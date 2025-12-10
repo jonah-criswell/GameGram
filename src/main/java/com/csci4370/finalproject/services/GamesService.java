@@ -28,6 +28,7 @@ public class GamesService {
     }
 
     public List<GameWithPlatforms> searchGameByTitle(String name) {
+        long startTime = System.currentTimeMillis();
         Map<String, GameWithPlatforms> map = new HashMap<>();
 
         final String sql = """
@@ -62,6 +63,10 @@ public class GamesService {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        long endTime = System.currentTimeMillis();
+        long duration = endTime - startTime;
+        System.out.println("Game search for \"" + name + "\" completed in " + duration + "ms");
 
         return new ArrayList<>(map.values());
 
