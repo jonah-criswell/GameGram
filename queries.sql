@@ -19,9 +19,6 @@ SELECT g.game_id, g.name, g.genre, p.platform, p.year, p.publisher,
                     JOIN platforms p ON g.game_id = p.game_id
                     ORDER BY p.global_sales DESC
                     LIMIT 10;
--- Finds the users not followed by the user
-WITH followed_users as (SELECT f.followedId as friend_id FROM follows f WHERE f.followingId = ?)
-SELECT * FROM user u WHERE u.user_id NOT IN (SELECT friend_id FROM followed_users) AND u.user_id <> ?;
 
 -- Games Page (for browsing and searching games)
 -- Using the search bar, get games with the title that the user inputs
@@ -29,8 +26,6 @@ SELECT g.game_id, g.name, g.genre, p.platform, p.year, p.publisher, p.na_sales, 
         FROM games g
         JOIN platforms p ON p.game_id = g.game_id
         WHERE g.name LIKE ?;
--- get the average rating for a game
-SELECT AVG(rating) as avg_rating FROM reviews WHERE review_of = ?;
 
 -- Profile Page
 -- Get user info and all their reviews 
@@ -80,33 +75,11 @@ update review set commentsCount = (
 -- Access a review's number of comments
 SELECT commentsCount FROM review WHERE reviewId = ?;
 
--- Review detail with viewer heart state (game page lists and review details)
-SELECT r.*, 
-        (SELECT COUNT(*) FROM review_hearts rh2 WHERE rh2.reviewId = r.reviewId) AS heartCountComputed,
-        EXISTS (SELECT 1 FROM review_hearts rh WHERE rh.reviewId = r.reviewId AND rh.userId = ?) AS heartedByUser
-FROM review r
-WHERE r.game_id = ?;
-
--- Single review by postId with viewer heart state (review details)
-SELECT r.*, 
-        (SELECT COUNT(*) FROM review_hearts rh2 WHERE rh2.reviewId = r.reviewId) AS heartCountComputed,
-        EXISTS (SELECT 1 FROM review_hearts rh WHERE rh.reviewId = r.reviewId AND rh.userId = ?) AS heartedByUser
-FROM review r
-WHERE r.reviewId = ?;
-
--- Latest review from a followed user (friends page)
-SELECT r.*, g.name as gameName
-FROM review r
-JOIN games g ON r.game_id = g.game_id
-WHERE r.userId = ?
-ORDER BY r.postDate DESC
-LIMIT 1;
+-- Fetch comments for a review in chronological order
+SELECT *, DATE_FORMAT(commentDate, '%b %d, %Y, %h:%i %p') AS formattedDate FROM review_comments WHERE reviewId = ? ORDER BY commentDate ASC;
 
 -- Check if the current user hearted a review
 SELECT 1 FROM review_hearts WHERE reviewId = ? AND userId = ?;
-
--- Fetch comments for a review in chronological order
-SELECT *, DATE_FORMAT(commentDate, '%b %d, %Y, %h:%i %p') AS formattedDate FROM review_comments WHERE reviewId = ? ORDER BY commentDate ASC;
 
 -- People/Friends helpers
 -- Users excluding the current user
@@ -122,4 +95,3 @@ JOIN follows f ON u.userId = f.followedId
 LEFT JOIN review r ON u.userId = r.userId
 WHERE f.followingId = ?
 GROUP BY u.userId, u.firstName, u.lastName;
-

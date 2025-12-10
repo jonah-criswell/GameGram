@@ -66,24 +66,10 @@ public class ReviewService {
 
     public List<Review> getReviewsByGameId(String gameId) {
         List<Review> reviews = new ArrayList<>();
-
-        Integer currentUserId = null;
-        if (userService.isAuthenticated() && userService.getLoggedInUser() != null) {
-            currentUserId = Integer.parseInt(userService.getLoggedInUser().getUserId());
-        }
-
-        final String reviewSql = """
-            SELECT r.*,
-                   (SELECT COUNT(*) FROM review_hearts rh2 WHERE rh2.reviewId = r.reviewId) AS heartCountComputed,
-                   EXISTS (SELECT 1 FROM review_hearts rh WHERE rh.reviewId = r.reviewId AND rh.userId = ?) AS heartedByUser
-            FROM review r
-            WHERE r.game_id = ?
-        """;
-
+        final String reviewSql = "SELECT * FROM review WHERE game_id = ?";
         try (Connection conn = dataSource.getConnection();
                 PreparedStatement reviewStmt = conn.prepareStatement(reviewSql)) {
-            reviewStmt.setInt(1, currentUserId != null ? currentUserId : -1);
-            reviewStmt.setInt(2, Integer.parseInt(gameId));
+            reviewStmt.setInt(1, Integer.parseInt(gameId));
             ResultSet rs = reviewStmt.executeQuery();
             while (rs.next()) {
                 String reviewId = rs.getString("reviewId");
@@ -94,9 +80,9 @@ public class ReviewService {
                 String userId = rs.getString("userId");
                 int gameIdInt = rs.getInt("game_id");
                 String gameName = gamesService.getGameById(gameIdInt);
-                int heartsCount = rs.getInt("heartCountComputed");
+                int heartsCount = rs.getInt("heartsCount");
                 int commentsCount = rs.getInt("commentsCount");
-                boolean isHearted = rs.getBoolean("heartedByUser");
+                boolean isHearted = rs.getBoolean("isHearted");
 
                 Review review = new Review(
                     reviewId,
@@ -175,30 +161,10 @@ public class ReviewService {
 
     public Review getReviewByPostId(String reviewId){
         Review review = null;
-
-        Integer currentUserId = null;
-        if (userService.isAuthenticated() && userService.getLoggedInUser() != null) {
-            currentUserId = Integer.parseInt(userService.getLoggedInUser().getUserId());
-        }
-
-        final String reviewSql = """
-    SELECT 
-        r.*, 
-        (SELECT COUNT(*) FROM review_hearts h WHERE h.reviewId = r.reviewId) AS heartCount,
-        EXISTS (
-            SELECT 1 FROM review_hearts h 
-            WHERE h.reviewId = r.reviewId AND h.userId = ?
-        ) AS isHearted
-    FROM 
-        review r
-    WHERE 
-        r.reviewId = ?
-    """;
-
+        final String reviewSql = "SELECT * FROM review WHERE reviewId = ?";
         try (Connection conn = dataSource.getConnection();
                 PreparedStatement reviewStmt = conn.prepareStatement(reviewSql)) {
-            reviewStmt.setInt(1, currentUserId != null ? currentUserId : -1);
-            reviewStmt.setString(2, reviewId);
+            reviewStmt.setString(1, reviewId);
             ResultSet rs = reviewStmt.executeQuery();
             if (rs.next()) {
                 int hoursPlayed = rs.getInt("hoursPlayed");
@@ -208,9 +174,9 @@ public class ReviewService {
                 String userId = rs.getString("userId");
                 int gameIdInt = rs.getInt("game_id");
                 String gameName = gamesService.getGameById(gameIdInt);
-                int heartsCount = rs.getInt("heartCountComputed");
+                int heartsCount = rs.getInt("heartsCount");
                 int commentsCount = rs.getInt("commentsCount");
-                boolean isHearted = rs.getBoolean("heartedByUser");
+                boolean isHearted = rs.getBoolean("isHearted");
 
 
                 review = new Review(
