@@ -19,7 +19,7 @@
         </form>
 
 {{#games}}
-    <div>
+    <div style="padding: 10px; margin-top: 15px; border: 1px solid #ccc; border-radius: 5px;">
         <h3>{{name}}</h3>
         <p><strong>Genre:</strong> {{genre}}</p>
         <p><strong>Platforms:</strong></p>
@@ -30,9 +30,10 @@
           </li>
         {{/platforms}}
         </ul>
+        <a href="/games/{{gameId}}" class="button">View Game</a>
     </div>
     <div>
-        <a href="/games/{{gameId}}" class="button">View Game</a>
+        
     </div>
 {{/games}}
 
