@@ -43,7 +43,6 @@ public class FriendsPageController {
             try {
                 List<FollowableUser> friendsList = peopleService.getFollowedUsers(currentUser.getUserId());
                 for (FollowableUser user1 : friendsList) {
-                    System.out.println("User ID: " + user1.getUserId());
                     Review recentGame = reviewService.getRecentReviewsFromFollowedUsers(user1.getUserId());
                     user1.setRecentGame(recentGame);
                 }
