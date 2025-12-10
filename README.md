@@ -24,7 +24,6 @@ Include the database name, database username and the password you used for the J
 
 Provide three test username and password pairs from your demo data.
 
-<<<<<<< HEAD
     Since the username and passcodes are encrypted using BCrypt, there are INACCESSIBLE to the another user, when inserted via SQL commands.
     This means you MUST CREATE A NEW USER when logging in. For you convienience, here are 3 sample users you can input on the registration page.
 
@@ -44,6 +43,3 @@ Provide three test username and password pairs from your demo data.
     passcode: whatsmyjob
 
 Run the project: ./mvnw spring-boot:run
-=======
-Run the project: ./mvnw spring-boot:run
->>>>>>> a499a2fa129a119a0e598bec2b8aae9ba08b60d2
