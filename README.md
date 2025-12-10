@@ -4,7 +4,7 @@ Group 16: Aidan Murray, Mason Gindlesperger, Christopher McIntosh, Jonah Criswel
 
 List what each team member did under their name:
 
-    Mason: Login, Authentification, Profile Page, Front End Programming
+    Mason: Login, Authentication, Profile Page, Front End Programming
     Jonah: Game Search Page, Review object creation
     Christopher: Likes, Comments, Most Popular Games impl, home page
     Joey: Front End Programming, User Profile Pages
