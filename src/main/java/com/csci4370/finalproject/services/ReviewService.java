@@ -158,7 +158,7 @@ public class ReviewService {
 
     public Review getReviewByPostId(String reviewId){
         Review review = null;
-        final String reviewSql = "SELECT * FROM review WHERE reviewId = ?";
+        final String reviewSql = "SELECT * FROM review WHERE reviewId = ? SORT BY postDate DESC";
         try (Connection conn = dataSource.getConnection();
                 PreparedStatement reviewStmt = conn.prepareStatement(reviewSql)) {
             reviewStmt.setString(1, reviewId);

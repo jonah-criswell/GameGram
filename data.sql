@@ -28117,4 +28117,5 @@ INSERT INTO review(reviewId, userId, game_id, hoursPlayed, reviewRating, content
 INSERT INTO review(reviewId, userId, game_id, hoursPlayed, reviewRating, content, postDate, heartsCount, commentsCount, isHearted, isBookmarked) VALUES (3, 1, 5482, 50, 3, "This game is cheese and i rage quit after Gordan Hayward missed a buzzer beater on John Wall.", NOW(), 0,0, false, false);
 INSERT INTO review(reviewId, userId, game_id, hoursPlayed, reviewRating, content, postDate, heartsCount, commentsCount, isHearted, isBookmarked) VALUES (4, 2, 7362, 50, 10, "BEST. GAME EVER!!!!!", NOW(), 0,0, false, false);
 INSERT INTO review(reviewId, userId, game_id, hoursPlayed, reviewRating, content, postDate, heartsCount, commentsCount, isHearted, isBookmarked) VALUES (5, 6, 1268, 5000, 10, "Played it alllllll the time. Couldn't take a break from it. Ever.", NOW(), 0,0, false, false);
+INSERT INTO review(reviewId, userId, game_id, hoursPlayed, reviewRating, content, postDate, heartsCount, commentsCount, isHearted, isBookmarked) VALUES (6, 3, 1, 113, 8, "The Plane Game on here that we had to use the nunchucks were the best", NOW(), 0,0, false, false);
 
