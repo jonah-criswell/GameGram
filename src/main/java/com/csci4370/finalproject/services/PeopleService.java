@@ -34,14 +34,12 @@ public class PeopleService {
 
     public List<FollowableUser> getFollowableUsers(String userIdToExclude) {
         List<FollowableUser> followableUsers = new ArrayList<>();
-        // Write an SQL query to find the users that are not the current user.
+        
         String sql = "SELECT * FROM user WHERE userId != ?";
-        // Run the query with a datasource.
        try (Connection conn = dataSource.getConnection();
          PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, userIdToExclude);
-        // See UserService.java to see how to inject DataSource instance and
-        // use it to run a query.
+        
             try(ResultSet rs = pstmt.executeQuery()) {
                 
                 while (rs.next()) {
@@ -57,7 +55,7 @@ public class PeopleService {
                         pstmt2.setString(1, userIdToExclude);
                         pstmt2.setString(2, user_id);
                         try (ResultSet rs2 = pstmt2.executeQuery()) {
-                            isFollow = rs2.next(); // true if exists, false if not
+                            isFollow = rs2.next(); 
                         }
                     } catch (SQLException e) {
                         e.printStackTrace();
@@ -76,7 +74,7 @@ public class PeopleService {
                         e.printStackTrace();
                     }
 
-                    //followableUsers.add(new FollowableUser(user_id, firstname, lastname, isFollow, ""));
+                    
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -86,26 +84,16 @@ public class PeopleService {
             e.printStackTrace();
          }
 
-        // Use the query result to create a list of followable users.
-        // See UserService.java to see how to access rows and their attributes
-        // from the query result.
-        // Check the following createSampleFollowableUserList function to see 
-        // how to create a list of FollowableUsers.
-
-        // Replace the following line and return the list you created.
         return followableUsers;
     }
 
     public List<User> getAllOtherUsers(String userIdToExclude) {
         List<User> allOtherUsers = new ArrayList<>();
-        // Write an SQL query to find the users that are not the current user.
         String sql = "SELECT * FROM user WHERE userId != ?";
-        // Run the query with a datasource.
        try (Connection conn = dataSource.getConnection();
          PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, userIdToExclude);
-        // See UserService.java to see how to inject DataSource instance and
-        // use it to run a query.
+        
             try(ResultSet rs = pstmt.executeQuery()) {
                 
                 while (rs.next()) {
@@ -124,13 +112,7 @@ public class PeopleService {
             e.printStackTrace();
          }
 
-        // Use the query result to create a list of followable users.
-        // See UserService.java to see how to access rows and their attributes
-        // from the query result.
-        // Check the following createSampleFollowableUserList function to see 
-        // how to create a list of FollowableUsers.
-
-        // Replace the following line and return the list you created.
+       
         return allOtherUsers;
     }
 
@@ -141,15 +123,12 @@ public class PeopleService {
     public List<FollowableUser> getFollowedUsers(String currentUserId) {
         List<FollowableUser> followedUsers = new ArrayList<>();
 
-        // SQL: 
-        // 1. Get User Details
-        // 2. JOIN 'follows' to filter only friends
-        // 3. LEFT JOIN 'review' to calculate the MAX(postDate) for the constructor
+       
         String sql = "SELECT u.userId, u.firstName, u.lastName, " +
                      "DATE_FORMAT(MAX(r.postDate), '%b %d, %Y') as lastActiveDate " +
                      "FROM user u " +
-                     "JOIN follows f ON u.userId = f.followedId " + // Only get people I follow
-                     "LEFT JOIN review r ON u.userId = r.userId " + // Join reviews to find the latest date
+                     "JOIN follows f ON u.userId = f.followedId " +
+                     "LEFT JOIN review r ON u.userId = r.userId " +
                      "WHERE f.followingId = ? " +
                      "GROUP BY u.userId, u.firstName, u.lastName";
 
@@ -165,16 +144,13 @@ public class PeopleService {
                     String lastName = rs.getString("lastName");
                     String lastActiveDate = rs.getString("lastActiveDate");
 
-                    // Since they are in the 'follows' table, isFollowed is always true
                     boolean isFollow = true;
 
                     if (lastActiveDate == null) {
                         lastActiveDate = "No recent activity";
                     }
 
-                    // Create the user object.
-                    // Note: We do NOT set .setRecentGame() here. 
-                    // Your FriendsPageController handles that in the loop.
+                    
                     followedUsers.add(new FollowableUser(userId, firstName, lastName, isFollow, lastActiveDate));
                 }
             }

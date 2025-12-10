@@ -50,20 +50,15 @@ public class UserService {
             pstmt.setString(1, username);
 
             try (ResultSet rs = pstmt.executeQuery()) {
-                // Traverse the result rows one at a time.
-                // Note: This specific while loop will only run at most once 
-                // since username is unique.
+                
                 while (rs.next()) {
-                    // Note: rs.get.. functions access attributes of the current row.
                     String storedPasswordHash = rs.getString("password");
                     boolean isPassMatch = passwordEncoder.matches(password, storedPasswordHash);
-                    // Note: 
                     if (isPassMatch) {
                         String userId = rs.getString("userId");
                         String firstName = rs.getString("firstName");
                         String lastName = rs.getString("lastName");
 
-                        // Initialize and retain the logged in user.
                         loggedInUser = new User(userId, firstName, lastName);
                     }
                     return isPassMatch;
@@ -153,39 +148,11 @@ public class UserService {
                     String username = rs.getString("username");
                     String firstName = rs.getString("firstName");
                     String lastName = rs.getString("lastName");
-                    //String profileImagePath = rs.getString("profileImagePath");
-
-                    // String postId = rs.getString("postId");
-                    // String content = rs.getString("content");
-                    // String postDate = rs.getString("formattedDate");
-                    // //User user = new User(userId, firstName, lastName, profileImagePath);
+                    
                     User user = new User(userId, firstName, lastName);
-                //     // For more complicated post:
-                //     int heartsCount = rs.getInt("heartsCount");
-                //     int commentsCount = rs.getInt("commentsCount");
-                //    // boolean isHearted = rs.getBoolean("isHearted");
-                //     boolean isHeartedBoolean;
-                //     final String checkHeartSql = "SELECT * FROM post_hearts WHERE userId = ? AND postId = ?;";
-                //     try (PreparedStatement checkHeartStmt = conn.prepareStatement(checkHeartSql)) {
-                //         checkHeartStmt.setString(1, userID);
-                //         checkHeartStmt.setString(2, postId);
-                //         try (ResultSet heartRs = checkHeartStmt.executeQuery()) {
-                //             isHeartedBoolean = heartRs.next();
-                //         }
-                //     }
-                //     //boolean isBookmarked = rs.getBoolean("isBookmarked");
-                //     boolean isBookmarkedBoolean;
-                //     final String checkBookmarkSql = "SELECT * FROM post_bookmarks WHERE userId = ? AND postId = ?;";
-                //     try (PreparedStatement checkBookmarkStmt = conn.prepareStatement(checkBookmarkSql)) {
-                //         checkBookmarkStmt.setString(1, userID);
-                //         checkBookmarkStmt.setString(2, postId);
-                //         try (ResultSet bookmarkRs = checkBookmarkStmt.executeQuery()) {
-                //             isBookmarkedBoolean = bookmarkRs.next();
-                //         }
-                //     }
-                    //user.add(new (postId, content, postDate, user, heartsCount, commentsCount, isHeartedBoolean, isBookmarkedBoolean));
+                
                     users.add(user);
-                   // posts.add(new BasicPost(postId, content, postDate, user));
+                  
                 }
             }
         } catch (Exception e) {
