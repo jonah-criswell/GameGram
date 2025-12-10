@@ -42,4 +42,6 @@ Provide three test username and password pairs from your demo data.
     username: chandlerbing
     passcode: whatsmyjob
 
+Demo Video: https://youtu.be/wnZsAnoZFm4
+
 Run the project: ./mvnw spring-boot:run
