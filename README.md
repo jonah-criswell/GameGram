@@ -15,7 +15,7 @@ Include all the technologies you used including 3rd party libraries:
     We used the 3rd Party Dataset, from Kaggle with the most popular video games found here:
     https://www.kaggle.com/datasets/ulrikthygepedersen/video-games-sales
 
-    We also used BCrypt to make make our passcodes sscure
+    We also used BCrypt to make make our passcodes secure
 
 Include the database name, database username and the password you used for the JDBC connection.
 
