@@ -15,6 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.SessionScope;
 
+import com.csci4370.finalproject.models.Comment;
 import com.csci4370.finalproject.models.Review;
 import com.csci4370.finalproject.models.User;
 
@@ -65,10 +66,24 @@ public class ReviewService {
 
     public List<Review> getReviewsByGameId(String gameId) {
         List<Review> reviews = new ArrayList<>();
-        final String reviewSql = "SELECT * FROM review WHERE game_id = ?";
+
+        Integer currentUserId = null;
+        if (userService.isAuthenticated() && userService.getLoggedInUser() != null) {
+            currentUserId = Integer.parseInt(userService.getLoggedInUser().getUserId());
+        }
+
+        final String reviewSql = """
+            SELECT r.*,
+                   (SELECT COUNT(*) FROM review_hearts rh2 WHERE rh2.reviewId = r.reviewId) AS heartCountComputed,
+                   EXISTS (SELECT 1 FROM review_hearts rh WHERE rh.reviewId = r.reviewId AND rh.userId = ?) AS heartedByUser
+            FROM review r
+            WHERE r.game_id = ?
+        """;
+
         try (Connection conn = dataSource.getConnection();
                 PreparedStatement reviewStmt = conn.prepareStatement(reviewSql)) {
-            reviewStmt.setString(1, gameId);
+            reviewStmt.setInt(1, currentUserId != null ? currentUserId : -1);
+            reviewStmt.setInt(2, Integer.parseInt(gameId));
             ResultSet rs = reviewStmt.executeQuery();
             while (rs.next()) {
                 String reviewId = rs.getString("reviewId");
@@ -77,8 +92,11 @@ public class ReviewService {
                 int reviewRating = rs.getInt("reviewRating");
                 String reviewDate = rs.getString("postDate");
                 String userId = rs.getString("userId");
-                int gameIdInt = rs.getInt("game_id"); // from your review query
-                String gameName = gamesService.getGameById(gameIdInt); // returns game name
+                int gameIdInt = rs.getInt("game_id");
+                String gameName = gamesService.getGameById(gameIdInt);
+                int heartsCount = rs.getInt("heartCountComputed");
+                int commentsCount = rs.getInt("commentsCount");
+                boolean isHearted = rs.getBoolean("heartedByUser");
 
                 Review review = new Review(
                     reviewId,
@@ -88,14 +106,13 @@ public class ReviewService {
                     gameIdInt,
                     hoursPlayed,
                     reviewRating,
-                    gameName,  // <- string for the constructor
-                    0, // heartsCount
-                    0, // commentsCount
-                    false, // isHearted
-                    false  // isBookmarked
+                    gameName,
+                    heartsCount,
+                    commentsCount,
+                    isHearted,
+                    false
                 );
 
-                //Review review = new Review(reviewId, content, reviewDate, userService.getUserById(userId), Integer.parseInt(gameId), hoursPlayed, reviewRating, GamesService.getGameById(gameId) 0, 0, false, false);
                 reviews.add(review);
             }
         } catch (SQLException e) {
@@ -158,10 +175,30 @@ public class ReviewService {
 
     public Review getReviewByPostId(String reviewId){
         Review review = null;
-        final String reviewSql = "SELECT * FROM review WHERE reviewId = ?";
+
+        Integer currentUserId = null;
+        if (userService.isAuthenticated() && userService.getLoggedInUser() != null) {
+            currentUserId = Integer.parseInt(userService.getLoggedInUser().getUserId());
+        }
+
+        final String reviewSql = """
+    SELECT 
+        r.*, 
+        (SELECT COUNT(*) FROM review_hearts h WHERE h.reviewId = r.reviewId) AS heartCount,
+        EXISTS (
+            SELECT 1 FROM review_hearts h 
+            WHERE h.reviewId = r.reviewId AND h.userId = ?
+        ) AS isHearted
+    FROM 
+        review r
+    WHERE 
+        r.reviewId = ?
+    """;
+
         try (Connection conn = dataSource.getConnection();
                 PreparedStatement reviewStmt = conn.prepareStatement(reviewSql)) {
-            reviewStmt.setString(1, reviewId);
+            reviewStmt.setInt(1, currentUserId != null ? currentUserId : -1);
+            reviewStmt.setString(2, reviewId);
             ResultSet rs = reviewStmt.executeQuery();
             if (rs.next()) {
                 int hoursPlayed = rs.getInt("hoursPlayed");
@@ -169,8 +206,12 @@ public class ReviewService {
                 int reviewRating = rs.getInt("reviewRating");
                 String reviewDate = rs.getString("postDate");
                 String userId = rs.getString("userId");
-                int gameIdInt = rs.getInt("game_id"); // from your review query
-                String gameName = gamesService.getGameById(gameIdInt); // returns game name
+                int gameIdInt = rs.getInt("game_id");
+                String gameName = gamesService.getGameById(gameIdInt);
+                int heartsCount = rs.getInt("heartCountComputed");
+                int commentsCount = rs.getInt("commentsCount");
+                boolean isHearted = rs.getBoolean("heartedByUser");
+
 
                 review = new Review(
                     reviewId,
@@ -180,17 +221,28 @@ public class ReviewService {
                     gameIdInt,
                     hoursPlayed,
                     reviewRating,
-                    gameName,  // <- string for the constructor
-                    0, // heartsCount
-                    0, // commentsCount
-                    false, // isHearted
-                    false  // isBookmarked
+                    gameName,
+                    heartsCount,
+                    commentsCount,
+                    isHearted,
+                    false
                 );
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return review;
+    }
+
+    public boolean hasUserHearted(String reviewId, User user) throws SQLException {
+        final String sql = "SELECT 1 FROM review_hearts WHERE reviewId = ? AND userId = ?";
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, reviewId);
+            stmt.setString(2, user.getUserId());
+            ResultSet rs = stmt.executeQuery();
+            return rs.next();
+        }
     }
 
      public boolean addOrRemoveHeart(String reviewId, User user, boolean isAdd) throws SQLException {
@@ -616,7 +668,35 @@ public class ReviewService {
     //         int rowsAffected = insertCommentStmt.executeUpdate();
     //         return rowsAffected > 0;
     //     }
-    }
+    // }
+
+    public List<Comment> getCommentsByReviewId(String reviewId) {
+        List<Comment> comments = new ArrayList<>();
+        final String commentsSql = "SELECT *, DATE_FORMAT(commentDate, '%b %d, %Y, %h:%i %p') AS formattedDate FROM review_comments WHERE reviewId = ? ORDER BY commentDate ASC";
+        
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement commentsStmt = conn.prepareStatement(commentsSql)) {
+            commentsStmt.setString(1, reviewId);
+            ResultSet commentsRs = commentsStmt.executeQuery();
+            
+            while (commentsRs.next()) {
+                String commentId = commentsRs.getString("commentId");
+                String commentText = commentsRs.getString("commentText");
+                String commentDate = commentsRs.getString("formattedDate");
+                String commentUserId = commentsRs.getString("userId");
+
+                // Fetch user details for the comment
+                User commentUser = userService.getUserById(commentUserId);
+                Comment comment = new Comment(commentId, commentText, commentDate, commentUser);
+                comments.add(comment);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        return comments;
+    }}
+
     // public boolean addOrRemoveBookmark(String postId, User user, boolean isAdd)
     // throws SQLException {
     // /**

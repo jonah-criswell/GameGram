@@ -38,12 +38,16 @@
         </div>
 
         <div class="review-stat" style="display: flex; align-items: center; gap: 15px;">
-            <span>
-                {{#isHearted}}<i class="fas fa-heart"></i>{{/isHearted}}{{^isHearted}}<i class="far fa-heart"></i>{{/isHearted}} 
-                {{heartsCount}}
-            </span>
+            <form method="post" action="/games/{{game_id}}/makereview/{{postId}}/heart" style="display: inline; margin: 0;">
+                <button type="submit" style="background: none; border: none; cursor: pointer; font-size: 0.9rem; color: #aaa; padding: 0; display: inline-flex; align-items: center; gap: 5px;">
+                    {{#isHearted}}<i class="fas fa-heart" style="color: #ff00cc;"></i>{{/isHearted}}{{^isHearted}}<i class="far fa-heart"></i>{{/isHearted}} 
+                    <span>{{heartsCount}}</span>
+                </button>
+            </form>
             
-            <span><i class="far fa-comment"></i> {{commentsCount}}</span>
+            <a href="/games/{{game_id}}/reviews/{{postId}}" style="color: #aaa; text-decoration: none; cursor: pointer;">
+                <span><i class="far fa-comment"></i> {{commentsCount}}</span>
+            </a>
         </div>
     </div>
 </div>

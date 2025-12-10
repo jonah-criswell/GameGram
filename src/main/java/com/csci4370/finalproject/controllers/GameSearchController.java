@@ -61,6 +61,8 @@ public class GameSearchController {
 
          mv.addObject("gameId", gameId);
 
+         mv.addObject("comments", reviewService.getCommentsByReviewId(postId));
+
          return mv;
       }
 

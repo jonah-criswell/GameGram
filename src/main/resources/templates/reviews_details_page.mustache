@@ -2,41 +2,84 @@
 <html lang="en">
 {{> fragments/html_header }}
 
-<body>
+<body class="game-page">
+
+    <div class="logo-wrapper">
+        <img src="/css/gg purple logo.png" alt="GameGram Logo">
+        <h1 class="brand-title">GameGram</h1>
+        <img src="/css/gg purple logo.png" alt="GameGram Logo">
+    </div>
+
     {{> fragments/navbar }}
 
-    <div class="container" style="max-width: 600px; margin: auto;">
+    <div class="container" style="max-width: 800px; margin: 0 auto; padding: 20px;">
 
-        <h1>Review Details</h1>
+        <h1 style="text-align: center; color: #fff; margin-bottom: 30px;">Review Details</h1>
 
         {{#review}}
-            <div style="text-align: center; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
+            <div style="background-color: #1a1a1a; border: 1px solid #333; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); color: #ffffff;">
                 
-                {{#user}}
-                <img src="{{profileImagePath}}" style="width:80px; height:80px; border-radius:50%; margin-bottom:10px;">
-                <h2>{{firstName}} {{lastName}}</h2>
-                {{/user}}
-
-                <h3>{{gameName}}</h3>
-
-                <p><strong>Rating:</strong> {{starRatingString}}</p>
-
-                <p><strong>Hours Played:</strong> {{hoursPlayed}}</p>
-
-                <p><strong>Review:</strong><br>{{content}}</p>
-
-                <div style="margin-top: 15px;">
-                    <span>
-                        {{#isHearted}}❤️{{/isHearted}}
-                        {{^isHearted}}🤍{{/isHearted}}
-                        {{heartsCount}}
-                    </span>
-                    
-                    <span style="margin-left: 15px;">💬 {{commentsCount}}</span>
-                    {{> fragments/comment_box }}
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #2a2a2a;">
+                    {{#user}}
+                    <img src="{{profileImagePath}}" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid #ff00cc;">
+                    <div>
+                        <h2 style="margin: 0; color: #fff;">{{firstName}} {{lastName}}</h2>
+                        <span style="color: #888; font-size: 0.9rem;">{{postDate}}</span>
+                    </div>
+                    {{/user}}
                 </div>
 
+                <h3 style="color: #ff00cc; margin-bottom: 15px; font-size: 1.5rem;">{{gameName}}</h3>
+
+                <div style="margin-bottom: 20px;">
+                    <div class="review-rating-badge" style="background: linear-gradient(90deg, #ff00cc, #333399); color: white; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 1rem; box-shadow: 0 2px 5px rgba(255, 0, 204, 0.2); display: inline-block; margin-bottom: 10px;">
+                        ★ {{reviewRating}}/10
+                    </div>
+                    <div style="background-color: #333; padding: 6px 12px; border-radius: 6px; color: #ccc; font-size: 0.9rem; border: 1px solid #444; display: inline-block; margin-left: 10px;">
+                        <i class="far fa-clock"></i> {{hoursPlayed}} hrs played
+                    </div>
+                </div>
+
+                <div style="color: #ddd; line-height: 1.6; font-size: 1.1rem; margin-bottom: 20px; padding: 15px; background-color: #0a0a0a; border-radius: 8px;">
+                    <p style="margin: 0;">{{content}}</p>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 20px; color: #aaa; font-size: 1rem;">
+                    <form method="post" action="/games/{{gameId}}/makereview/{{postId}}/heart" style="display: inline; margin: 0;">
+                        <input type="hidden" name="returnTo" value="details">
+                        <button type="submit" style="background: none; border: none; cursor: pointer; font-size: 1rem; color: #aaa; padding: 0; display: inline-flex; align-items: center; gap: 5px;">
+                            {{#isHearted}}<i class="fas fa-heart" style="color: #ff00cc;"></i>{{/isHearted}}{{^isHearted}}<i class="far fa-heart"></i>{{/isHearted}} 
+                            <span>{{heartsCount}}</span>
+                        </button>
+                    </form>
+                    
+                    <span><i class="far fa-comment"></i> {{commentsCount}}</span>
+                </div>
             </div>
+
+            <div style="background-color: #1a1a1a; border: 1px solid #333; border-radius: 12px; padding: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
+                <h2 style="color: #fff; margin-bottom: 20px; margin-top: 0;">Comments</h2>
+                
+                {{> fragments/comment_box }}
+                
+                <div style="margin-top: 30px;">
+                    {{#comments}}
+                        <div style="background-color: #0a0a0a; padding: 15px; margin-bottom: 15px; border-radius: 8px; border-left: 3px solid #ff00cc;">
+                            <div style="margin-bottom: 8px; display: flex; align-items: center; gap: 10px;">
+                                {{#user}}
+                                    <strong style="color: #fff;">{{firstName}} {{lastName}}</strong>
+                                {{/user}}
+                                <span style="color: #888; font-size: 0.85rem;">{{postDate}}</span>
+                            </div>
+                            <p style="color: #ddd; margin: 0; line-height: 1.5;">{{content}}</p>
+                        </div>
+                    {{/comments}}
+                    {{^comments}}
+                        <p style="color: #666; text-align: center; padding: 20px;">No comments yet. Be the first to comment!</p>
+                    {{/comments}}
+                </div>
+            </div>
+
         {{/review}}
 
     </div>

@@ -80,3 +80,46 @@ update review set commentsCount = (
 -- Access a review's number of comments
 SELECT commentsCount FROM review WHERE reviewId = ?;
 
+-- Review detail with viewer heart state (game page lists and review details)
+SELECT r.*, 
+        (SELECT COUNT(*) FROM review_hearts rh2 WHERE rh2.reviewId = r.reviewId) AS heartCountComputed,
+        EXISTS (SELECT 1 FROM review_hearts rh WHERE rh.reviewId = r.reviewId AND rh.userId = ?) AS heartedByUser
+FROM review r
+WHERE r.game_id = ?;
+
+-- Single review by postId with viewer heart state (review details)
+SELECT r.*, 
+        (SELECT COUNT(*) FROM review_hearts rh2 WHERE rh2.reviewId = r.reviewId) AS heartCountComputed,
+        EXISTS (SELECT 1 FROM review_hearts rh WHERE rh.reviewId = r.reviewId AND rh.userId = ?) AS heartedByUser
+FROM review r
+WHERE r.reviewId = ?;
+
+-- Latest review from a followed user (friends page)
+SELECT r.*, g.name as gameName
+FROM review r
+JOIN games g ON r.game_id = g.game_id
+WHERE r.userId = ?
+ORDER BY r.postDate DESC
+LIMIT 1;
+
+-- Check if the current user hearted a review
+SELECT 1 FROM review_hearts WHERE reviewId = ? AND userId = ?;
+
+-- Fetch comments for a review in chronological order
+SELECT *, DATE_FORMAT(commentDate, '%b %d, %Y, %h:%i %p') AS formattedDate FROM review_comments WHERE reviewId = ? ORDER BY commentDate ASC;
+
+-- People/Friends helpers
+-- Users excluding the current user
+SELECT * FROM user WHERE userId != ?;
+-- Has current user followed another user
+SELECT 1 FROM follows WHERE followingId = ? AND followedId = ? LIMIT 1;
+-- Most recent post date for a user
+SELECT DATE_FORMAT(postDate, '%b %d, %Y, %h:%i %p') AS formattedDate FROM review WHERE userId = ? ORDER BY postDate DESC LIMIT 1;
+-- Followed users with last active date
+SELECT u.userId, u.firstName, u.lastName, DATE_FORMAT(MAX(r.postDate), '%b %d, %Y') as lastActiveDate
+FROM user u
+JOIN follows f ON u.userId = f.followedId
+LEFT JOIN review r ON u.userId = r.userId
+WHERE f.followingId = ?
+GROUP BY u.userId, u.firstName, u.lastName;
+

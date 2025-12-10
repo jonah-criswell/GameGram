@@ -6,10 +6,9 @@
     width: 100%;
     box-sizing: border-box;
 ">
-    <form method="post" action="/comments/{{postId}}">
-        <input type="hidden" name="gameId" value="{{gameId}}">
+    <form method="post" action="/games/{{gameId}}/makereview/comments/{{postId}}">
         <textarea name="comment" placeholder="Write a comment..." rows="3" style="
-            width: 100%;
+            width: 95%;
             padding: 8px;
             border-radius: 5px;
             border: 1px solid #ccc;
